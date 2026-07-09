@@ -1,1265 +1,618 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-8VV8S7QWS6"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-8VV8S7QWS6');
-</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SweetJoy Patisserie - Tiệm Bánh Ngọt Cao Cấp</title>
+    <title>Vân Anh PTIT - Góc Nhỏ Bình Yên</title>
+
+    <!-- KEEPING GOOGLE ANALYTICS INTEGRATION FUNCTIONAL -->
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-M2ENPL687P"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-M2ENPL687P');
+    </script>
+
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Alpine.js for interactive state management -->
+    <!-- Alpine.js for page transitions and interactivity -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <!-- Google Fonts: Playfair Display for elegant headings, Inter for clean body -->
+    <!-- Google Fonts: Quicksand for cute/soft body, Playfair Display for aesthetic headings -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Sacramento&display=swap" rel="stylesheet">
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- Custom styling & configuration -->
+
+    <!-- Custom Tailwind Styling Tokens -->
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
+                        sans: ['Quicksand', 'sans-serif'],
                         serif: ['Playfair Display', 'serif'],
+                        hand: ['Sacramento', 'cursive'],
                     },
                     colors: {
-                        cream: {
-                            50: '#FDFBF7',
-                            100: '#FAF6EE',
-                            200: '#F5ECDB',
-                            300: '#EADBC0',
+                        cozy: {
+                            50: '#FDFBF7',  // Soft linen/cream
+                            100: '#FAF4EB', // Warm sand
+                            200: '#F3E4D3', // Soft wheat
+                            300: '#E6CCA9', // Cozy tea
+                            700: '#8C6239', // Milk tea brown
+                            800: '#5C3E21', // Dark cocoa
+                            900: '#3D2511', // Warm soil
                         },
-                        cocoa: {
-                            800: '#2D1A12',
-                            900: '#1F100B',
-                        },
+                        sunset: {
+                            100: '#FCEBE6', // Soft peach sky
+                            200: '#FACDBC', // Pastel orange
+                            500: '#E07A5F', // Warm terracotta
+                            600: '#C95D41', // Deep coral
+                        }
                     }
                 }
             }
         }
     </script>
+
     <style>
-        .custom-scrollbar::-webkit-scrollbar {
-            width: 6px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-            background: #FAF6EE;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-            background-color: #EADBC0;
-            border-radius: 20px;
-        }
         [x-cloak] { display: none !important; }
+        /* Smooth scrolling */
+        html { scroll-behavior: smooth; }
+        /* Custom scrollbar for cozy feel */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #FDFBF7;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #E6CCA9;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #D4B285;
+        }
+        /* Spinning vinyl record animation */
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .animate-spin-slow {
+            animation: spin 15s linear infinite;
+        }
     </style>
 </head>
 <body 
     x-data="{
-        cart: [],
-        isCartOpen: false,
-        selectedCategory: 'all',
-        selectedPastry: null,
-        showCheckoutSuccess: false,
-        pastries: [
-            { id: 1, name: 'Mousse Dâu Tây Hoàng Gia', category: 'french', price: 85000, rating: 4.9, image: 'https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=500&auto=format&fit=crop&q=80', desc: 'Sự kết hợp hoàn hảo giữa mousse dâu tây mịn màng, thạch dâu tây tươi và cốt bánh bông lan mềm mại đậm chất Pháp.', ingredients: 'Dâu tây tươi, kem tươi Pháp, gelatin, đường hữu cơ, bột mì cao cấp.', calories: '320 kcal', allergens: 'Có sữa, gluten' },
-            { id: 2, name: 'Tiramisu Ý Cổ Điển', category: 'cakes', price: 95000, rating: 5.0, image: 'https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?w=500&auto=format&fit=crop&q=80', desc: 'Bánh Tiramisu truyền thống ngập tràn hương vị cà phê Espresso đậm đặc, rượu Kahlúa thơm nồng xen kẽ lớp kem phô mai Mascarpone béo ngậy.', ingredients: 'Phô mai Mascarpone, cà phê Espresso, lòng đỏ trứng, bánh sâm panh, bột ca cao nguyên chất.', calories: '410 kcal', allergens: 'Có cồn nhẹ, trứng, sữa' },
-            { id: 3, name: 'Macaron Paris Sắc Màu (Hộp 6 cái)', category: 'french', price: 180000, rating: 4.8, image: 'https://images.unsplash.com/photo-1569864358642-9d1684040f43?w=500&auto=format&fit=crop&q=80', desc: 'Bộ sưu tập macarons thủ công với các hương vị trứ danh: Dâu tây, Matcha Nhật Bản, Socola Bỉ, Caramel muối, Chanh vàng và Việt quất.', ingredients: 'Bột hạnh nhân, lòng trắng trứng, đường bột, kem ganache tự nhiên.', calories: '80 kcal/cái', allergens: 'Hạt hạnh nhân, lòng trắng trứng' },
-            { id: 4, name: 'Cupcake Hoa Hồng Thơ Mộng', category: 'cupcakes', price: 45000, rating: 4.7, image: 'https://images.unsplash.com/photo-1576618148400-f54bed99fcfd?w=500&auto=format&fit=crop&q=80', desc: 'Bánh cupcake nhỏ xinh với lớp cốt vanilla mềm ẩm, phủ kem bơ Thụy Sĩ hương hoa hồng dịu nhẹ đầy lãng mạn.', ingredients: 'Bơ nhạt lạt, cốt vanilla Madagascar, kem bơ, cánh hoa hồng sấy hữu cơ.', calories: '290 kcal', allergens: 'Có sữa, trứng, gluten' },
-            { id: 5, name: 'Bánh Sừng Bò Ngàn Lớp (Croissant)', category: 'french', price: 40000, rating: 4.9, image: 'https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=500&auto=format&fit=crop&q=80', desc: 'Croissant chuẩn Pháp siêu giòn rụm bên ngoài, ẩm mềm thơm phức hương bơ lạt nguyên chất bên trong.', ingredients: 'Bột mì chuyên dụng, bơ lạt nhập khẩu Pháp (82% béo), men tự nhiên.', calories: '340 kcal', allergens: 'Bơ sữa, gluten' },
-            { id: 6, name: 'Red Velvet Tình Yêu', category: 'cakes', price: 90000, rating: 4.9, image: 'https://images.unsplash.com/photo-1616541823729-00fe0aacd32c?w=500&auto=format&fit=crop&q=80', desc: 'Sự quyến rũ khó cưỡng từ sắc đỏ nhung của cốt bánh kết hợp tinh tế cùng lớp kem phô mai chua ngọt hài hòa.', ingredients: 'Cốt bánh đỏ velvet, kem phô mai cream cheese, nước cốt chanh tươi, ca cao hữu cơ.', calories: '380 kcal', allergens: 'Có sữa, gluten' },
-            { id: 7, name: 'Bánh Tart Trái Cây Nhiệt Đới', category: 'healthy', price: 75000, rating: 4.6, image: 'https://images.unsplash.com/photo-1519915028121-7d3463d20b13?w=500&auto=format&fit=crop&q=80', desc: 'Đế bánh tart giòn giòn đựng đầy kem custard vanilla và phủ kín bởi trái cây tươi theo mùa ngọt lành.', ingredients: 'Bột yến mạch, kem hạt điều (thuần chay), dâu tây, kiwi, việt quất, xoài chín.', calories: '210 kcal', allergens: 'Hạt điều, yến mạch (Phù hợp ăn kiêng)' },
-            { id: 8, name: 'Matcha Crepe Ngàn Lớp', category: 'cakes', price: 88000, rating: 4.8, image: 'https://images.unsplash.com/photo-1536680465759-35c46d3e18cf?w=500&auto=format&fit=crop&q=80', desc: 'Hơn 20 lớp bánh crepe mỏng cánh sen xếp chồng xen kẽ với kem tươi đánh bông mịn vị trà xanh Uji thượng hạng.', ingredients: 'Bột trà xanh Uji Matcha Nhật Bản, kem tươi, sữa tươi nguyên kem.', calories: '350 kcal', allergens: 'Có sữa, trứng, gluten' }
+        activeTab: 'about', // about, hometown, chill
+        isPlaying: false,
+        toastMessage: '',
+        showToast: false,
+        hometownDetail: null,
+        activeTrack: 0,
+        likedDramas: [false, false, false],
+        tracks: [
+            { title: 'Some - Bol4 (Lofi Version)', duration: '03:12', mood: 'Ngọt ngào, nhẹ nhàng' },
+            { title: 'Aloha - Jo Jung Suk (Hospital Playlist)', duration: '04:01', mood: 'Hoài niệm, rực rỡ' },
+            { title: 'Our Beloved Summer - Kim Na Young', duration: '03:40', mood: 'Thanh mát, trong trẻo' }
         ],
-        cakeCustomizer: {
-            base: 'vanilla', // vanilla, chocolate, matcha, redvelvet
-            frosting: 'strawberry', // strawberry, cheese, chocolate, caramel
-            toppings: [], // strawberry, sprinkle, chocolatechip
-            text: '',
-            price: 450000,
-            getBaseColor() {
-                const colors = { vanilla: '#FDF2E9', chocolate: '#5C3A21', matcha: '#76A035', redvelvet: '#A62B2B' };
-                return colors[this.base];
+        hometownItems: [
+            { 
+                id: 'vong-cuc',
+                title: 'Biển Vô Cực (Thụy Xuân)', 
+                type: 'Cảnh đẹp',
+                image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&auto=format&fit=crop&q=80',
+                desc: 'Được mệnh danh là chiếc gương khổng lồ của bầu trời vào mỗi sớm bình minh. Khi thủy triều rút, nước biển chỉ xấp xỉ mắt cá chân, tạo nên một mặt phẳng lặng như gương phản chiếu vạn vật vô tận.'
             },
-            getFrostingColor() {
-                const colors = { strawberry: '#FAA4BD', cheese: '#FFF8E7', chocolate: '#3D2515', caramel: '#E6A15C' };
-                return colors[this.frosting];
+            { 
+                id: 'dong-chau',
+                title: 'Biển Đồng Châu', 
+                type: 'Cảnh đẹp',
+                image: 'https://images.unsplash.com/photo-1519046904884-53103b34b206?w=800&auto=format&fit=crop&q=80',
+                desc: 'Nổi tiếng với những chòi canh ngao mọc lên sừng sững giữa biển khơi hoang sơ. Nơi đây mang một nét đẹp bình dị, êm ả gắn liền với đời sống lao động của bà con diêm dân hiền hòa.'
             },
-            calculatePrice() {
-                let basePrice = 450000;
-                basePrice += this.toppings.length * 30000;
-                if (this.text.trim().length > 0) basePrice += 20000;
-                this.price = basePrice;
+            { 
+                id: 'banh-cay',
+                title: 'Đặc sản Bánh Cáy', 
+                type: 'Ẩm thực',
+                image: 'https://images.unsplash.com/photo-1582231375626-1417e8a306cf?w=800&auto=format&fit=crop&q=80',
+                desc: 'Món bánh tiến vua đậm đà hương vị đồng quê Thái Bình. Làm từ hạt nếp cái hoa vàng quện với vị cay nồng của gừng, bùi bùi của hạt vừng và giòn giòn thơm thơm đặc trưng.'
+            },
+            { 
+                id: 'canh-ca',
+                title: 'Canh Cá Quỳnh Côi', 
+                type: 'Ẩm thực',
+                image: 'https://images.unsplash.com/photo-1541832676-9b763b0239ab?w=800&auto=format&fit=crop&q=80',
+                desc: 'Món ăn sáng trứ danh với những sợi bánh đa Quỳnh Côi mỏng dai đặc trưng, cá rô đồng chiên vàng giòn thơm ngậy chan cùng nước dùng thanh ngọt nấu từ xương cá.'
             }
-        },
-        quiz: {
-            step: 1,
-            answers: { mood: '', sweet: '', drink: '' },
-            recommendation: null,
-            reset() {
-                this.step = 1;
-                this.answers = { mood: '', sweet: '', drink: '' };
-                this.recommendation = null;
-            },
-            submitAnswer(field, value) {
-                this.answers[field] = value;
-                if (this.step < 3) {
-                    this.step++;
-                } else {
-                    this.calculateRecommendation();
-                }
-            },
-            calculateRecommendation() {
-                // Logic gợi ý bánh dựa trên sở thích
-                if (this.answers.sweet === 'light' && this.answers.drink === 'tea') {
-                    this.recommendation = { name: 'Matcha Crepe Ngàn Lớp', price: 88000, desc: 'Hương vị thanh tao mát dịu, kết hợp trà xanh ấm áp.', image: 'https://images.unsplash.com/photo-1536680465759-35c46d3e18cf?w=500&auto=format&fit=crop&q=80' };
-                } else if (this.answers.sweet === 'rich' || this.answers.mood === 'comfort') {
-                    this.recommendation = { name: 'Tiramisu Ý Cổ Điển', price: 95000, desc: 'Sự nuông chiều tuyệt đối dành cho tâm hồn mệt mỏi với chút ngọt ngào say đắm.', image: 'https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?w=500&auto=format&fit=crop&q=80' };
-                } else if (this.answers.sweet === 'fruity') {
-                    this.recommendation = { name: 'Mousse Dâu Tây Hoàng Gia', price: 85000, desc: 'Vị chua ngọt bừng sáng đầy năng lượng tích cực.', image: 'https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=500&auto=format&fit=crop&q=80' };
-                } else {
-                    this.recommendation = { name: 'Red Velvet Tình Yêu', price: 90000, desc: 'Lãng mạn, ngọt ngào và đầy lôi cuốn.', image: 'https://images.unsplash.com/photo-1616541823729-00fe0aacd32c?w=500&auto=format&fit=crop&q=80' };
-                }
-            }
-        },
-        addToCart(item, isCustom = false) {
-            let cartId = isCustom ? 'custom-' + Date.now() : item.id;
-            let existing = this.cart.find(c => c.cartId === cartId);
-            if (existing) {
-                existing.quantity++;
-            } else {
-                this.cart.push({
-                    cartId: cartId,
-                    id: item.id,
-                    name: item.name,
-                    price: item.price,
-                    image: item.image,
-                    quantity: 1,
-                    details: isCustom ? item.details : ''
-                });
-            }
-            this.isCartOpen = true;
-        },
-        removeFromCart(cartId) {
-            this.cart = this.cart.filter(c => c.cartId !== cartId);
-        },
-        getCartTotal() {
-            return this.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-        },
-        checkout() {
-            this.cart = [];
-            this.isCartOpen = false;
-            this.showCheckoutSuccess = true;
-            setTimeout(() => { this.showCheckoutSuccess = false; }, 5000);
+        ],
+        triggerToast(msg) {
+            this.toastMessage = msg;
+            this.showToast = true;
+            setTimeout(() => { this.showToast = false; }, 3000);
         }
     }"
-    class="bg-cream-50 text-cocoa-800 font-sans min-h-screen selection:bg-rose-200 selection:text-rose-900"
+    class="bg-cozy-50 text-cozy-900 font-sans min-h-screen transition-colors duration-500"
 >
-    <!-- HEADER BAR -->
-    <header class="sticky top-0 z-40 bg-cream-100/90 backdrop-blur-md border-b border-cream-200 transition-all duration-300">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+    <!-- NAVBAR -->
+    <header class="sticky top-0 z-40 bg-cozy-100/80 backdrop-blur-md border-b border-cozy-200 py-4 transition-all duration-300">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 flex items-center justify-between">
             <!-- Brand Logo -->
-            <a href="#" class="flex items-center space-x-2 group">
-                <div class="w-10 h-10 rounded-full bg-rose-500 flex items-center justify-center text-white shadow-md group-hover:scale-105 transition-transform">
-                    <i data-lucide="cake" class="w-6 h-6"></i>
-                </div>
-                <div>
-                    <span class="font-serif font-bold text-xl sm:text-2xl tracking-wide text-rose-500 block">SweetJoy</span>
-                    <span class="text-[10px] uppercase tracking-widest text-amber-700 font-semibold -mt-1 block">Patisserie Paris</span>
-                </div>
+            <a href="#" class="flex items-center space-x-1 group">
+                <span class="font-hand text-4xl text-sunset-500 font-bold group-hover:scale-105 transition-transform">Van Anh</span>
+                <span class="w-2 h-2 rounded-full bg-sunset-200 mt-4"></span>
             </a>
 
-            <!-- Navigation Links (Desktop) -->
-            <nav class="hidden md:flex space-x-8 font-medium text-sm text-cocoa-800/80">
-                <a href="#menu" class="hover:text-rose-500 transition-colors py-2 border-b-2 border-transparent hover:border-rose-500">Thực Đơn</a>
-                <a href="#customizer" class="hover:text-rose-500 transition-colors py-2 border-b-2 border-transparent hover:border-rose-500">Tự Thiết Kế Bánh</a>
-                <a href="#quiz" class="hover:text-rose-500 transition-colors py-2 border-b-2 border-transparent hover:border-rose-500">Gợi Ý Thú Vị</a>
-                <a href="#story" class="hover:text-rose-500 transition-colors py-2 border-b-2 border-transparent hover:border-rose-500">Về Chúng Tôi</a>
-                <a href="#contact" class="hover:text-rose-500 transition-colors py-2 border-b-2 border-transparent hover:border-rose-500">Liên Hệ</a>
+            <!-- Desktop Nav tabs switching -->
+            <nav class="flex items-center space-x-1 bg-cozy-200/50 p-1.5 rounded-full border border-cozy-200">
+                <button 
+                    @click="activeTab = 'about'"
+                    :class="activeTab === 'about' ? 'bg-white text-sunset-600 shadow-md font-bold' : 'text-cozy-700 hover:text-sunset-500'"
+                    class="px-5 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 flex items-center space-x-1.5"
+                >
+                    <i data-lucide="user" class="w-4 h-4"></i>
+                    <span>Bản Thân</span>
+                </button>
+                <button 
+                    @click="activeTab = 'hometown'"
+                    :class="activeTab === 'hometown' ? 'bg-white text-sunset-600 shadow-md font-bold' : 'text-cozy-700 hover:text-sunset-500'"
+                    class="px-5 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 flex items-center space-x-1.5"
+                >
+                    <i data-lucide="compass" class="w-4 h-4"></i>
+                    <span>Quê Hương</span>
+                </button>
+                <button 
+                    @click="activeTab = 'chill'"
+                    :class="activeTab === 'chill' ? 'bg-white text-sunset-600 shadow-md font-bold' : 'text-cozy-700 hover:text-sunset-500'"
+                    class="px-5 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 flex items-center space-x-1.5"
+                >
+                    <i data-lucide="coffee" class="w-4 h-4"></i>
+                    <span>Góc Chill</span>
+                </button>
             </nav>
 
-            <!-- Action Area -->
-            <div class="flex items-center space-x-4">
-                <a href="tel:19001234" class="hidden lg:flex items-center space-x-2 text-amber-700 font-semibold text-sm">
-                    <i data-lucide="phone-call" class="w-4 h-4"></i>
-                    <span>Hotline: 1900 1234</span>
-                </a>
-                
-                <!-- Cart Button -->
-                <button 
-                    @click="isCartOpen = true"
-                    class="relative w-12 h-12 rounded-full bg-white border border-cream-200 flex items-center justify-center text-cocoa-800 hover:text-rose-500 hover:shadow-md transition-all group"
-                >
-                    <i data-lucide="shopping-bag" class="w-5 h-5 group-hover:scale-110 transition-transform"></i>
-                    <template x-if="cart.length > 0">
-                        <span 
-                            class="absolute -top-1 -right-1 bg-rose-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold animate-bounce"
-                            x-text="cart.reduce((sum, item) => sum + item.quantity, 0)"
-                        ></span>
-                    </template>
-                </button>
+            <!-- Quick Link / Badge -->
+            <div class="hidden md:flex items-center space-x-2 text-xs font-semibold text-cozy-700 bg-white px-4 py-2.5 rounded-full border border-cozy-200 shadow-sm">
+                <span class="w-2 h-2 bg-emerald-500 rounded-full animate-ping"></span>
+                <span>Sinh viên QTKD @ PTIT</span>
             </div>
         </div>
     </header>
 
-    <!-- HERO SECTION -->
-    <section class="relative overflow-hidden bg-gradient-to-b from-cream-100 to-cream-50 pt-10 pb-20 lg:pt-16 lg:pb-32">
-        <div class="absolute inset-0 opacity-10 pointer-events-none">
-            <!-- Subtle background pattern with pastry elements -->
-            <div class="absolute top-10 left-10 w-48 h-48 bg-rose-200 rounded-full blur-3xl"></div>
-            <div class="absolute bottom-10 right-10 w-72 h-72 bg-amber-200 rounded-full blur-3xl"></div>
-        </div>
-
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            <div class="grid lg:grid-cols-12 gap-12 items-center">
+    <!-- MAIN BODY PORTFOLIO -->
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 py-10">
+        
+        <!-- TAB 1: BẢN THÂN (ABOUT ME) -->
+        <section x-show="activeTab === 'about'" x-transition:enter="transition ease-out duration-500 transform" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0" class="space-y-12">
+            
+            <!-- Hero banner introducing Van Anh -->
+            <div class="grid lg:grid-cols-12 gap-8 items-center bg-gradient-to-br from-cozy-100 to-sunset-100 p-8 sm:p-12 rounded-3xl border border-cozy-200 relative overflow-hidden">
+                <div class="absolute -top-10 -right-10 w-40 h-40 bg-sunset-200/20 rounded-full blur-3xl"></div>
+                <div class="absolute -bottom-10 -left-10 w-60 h-60 bg-cozy-300/30 rounded-full blur-3xl"></div>
                 
-                <!-- Left Content Info -->
-                <div class="lg:col-span-6 space-y-6 text-center lg:text-left">
-                    <span class="inline-flex items-center space-x-2 px-3 py-1.5 rounded-full bg-rose-50 border border-rose-100 text-rose-500 text-xs font-semibold tracking-wider uppercase">
-                        <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
-                        <span>Nghệ Thuật Bánh Ngọt Pháp Thủ Công</span>
-                    </span>
-                    <h1 class="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight text-cocoa-900">
-                        Thắp Sáng Khoảnh Khắc Bằng Sự <span class="text-rose-500 relative inline-block">Ngọt Ngào<span class="absolute left-0 bottom-1 w-full h-2 bg-rose-100 -z-10 rounded-full"></span></span>
-                    </h1>
-                    <p class="text-cocoa-800/80 text-base sm:text-lg max-w-xl mx-auto lg:mx-0">
-                        Từ lò nướng của SweetJoy Patisserie, chúng tôi mang tới những tác phẩm nghệ thuật bánh ngọt kết tinh từ nguyên liệu thượng hạng chuẩn Âu và tình yêu đong đầy của những nghệ nhân tài hoa.
-                    </p>
-                    <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
-                        <a href="#menu" class="w-full sm:w-auto px-8 py-4 bg-rose-500 text-white rounded-full font-semibold shadow-lg shadow-rose-500/20 hover:bg-rose-600 transition-all text-center flex items-center justify-center space-x-2">
-                            <span>Khám phá thực đơn</span>
-                            <i data-lucide="arrow-right" class="w-5 h-5"></i>
-                        </a>
-                        <a href="#customizer" class="w-full sm:w-auto px-8 py-4 bg-white text-rose-500 border border-rose-200 rounded-full font-semibold hover:bg-rose-50/50 transition-all text-center flex items-center justify-center space-x-2">
-                            <i data-lucide="brush" class="w-5 h-5"></i>
-                            <span>Tự thiết kế bánh kem</span>
-                        </a>
-                    </div>
-
-                    <!-- Statistics / Perks -->
-                    <div class="grid grid-cols-3 gap-6 pt-6 border-t border-cream-200/60 max-w-md mx-auto lg:mx-0">
-                        <div>
-                            <span class="block font-serif font-bold text-3xl text-amber-700">100%</span>
-                            <span class="text-xs text-cocoa-800/60">Bơ sữa tự nhiên</span>
-                        </div>
-                        <div>
-                            <span class="block font-serif font-bold text-3xl text-amber-700">50+</span>
-                            <span class="text-xs text-cocoa-800/60">Hương vị độc quyền</span>
-                        </div>
-                        <div>
-                            <span class="block font-serif font-bold text-3xl text-amber-700">Daily</span>
-                            <span class="text-xs text-cocoa-800/60">Nướng mới mỗi ngày</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Right Feature Images & Floating Graphics -->
-                <div class="lg:col-span-6 relative flex justify-center">
-                    <div class="relative w-72 h-72 sm:w-96 sm:h-96 md:w-[420px] md:h-[420px] rounded-full overflow-hidden border-8 border-white shadow-2xl">
+                <!-- Graphic Illustration -->
+                <div class="lg:col-span-5 flex justify-center">
+                    <div class="relative w-64 h-64 sm:w-80 sm:h-80 rounded-full overflow-hidden border-8 border-white shadow-2xl relative z-10 group">
                         <img 
-                            src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=800&auto=format&fit=crop&q=80" 
-                            alt="Bánh kem thiết kế sang trọng" 
-                            class="w-full h-full object-cover scale-105 hover:scale-100 transition-all duration-700"
+                            src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=500&auto=format&fit=crop&q=80" 
+                            alt="Minh họa Vân Anh lofi vibe" 
+                            class="w-full h-full object-cover scale-105 group-hover:scale-100 transition-transform duration-700"
                         />
-                    </div>
-                    
-                    <!-- Floating Badge -->
-                    <div class="absolute -top-4 -left-4 bg-white p-4 rounded-2xl shadow-xl flex items-center space-x-3 max-w-[200px] border border-cream-100 animate-bounce">
-                        <div class="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center text-amber-600">
-                            <i data-lucide="award" class="w-5 h-5"></i>
-                        </div>
-                        <div>
-                            <span class="block text-xs font-bold text-cocoa-900">Chuẩn Fine Pastry</span>
-                            <span class="text-[10px] text-cocoa-800/60">Đánh giá 5 sao từ Pháp</span>
-                        </div>
-                    </div>
-
-                    <!-- Floating Badge 2 -->
-                    <div class="absolute bottom-6 right-2 sm:right-6 bg-white p-3 rounded-2xl shadow-xl flex items-center space-x-3 border border-cream-100">
-                        <div class="flex -space-x-2">
-                            <img class="w-8 h-8 rounded-full border-2 border-white object-cover" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80" alt="Avatar user">
-                            <img class="w-8 h-8 rounded-full border-2 border-white object-cover" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80" alt="Avatar user">
-                        </div>
-                        <div>
-                            <span class="block text-xs font-bold text-rose-500">10,000+</span>
-                            <span class="text-[10px] text-cocoa-800/60">Khách hàng yêu mến</span>
+                        <div class="absolute inset-0 bg-gradient-to-t from-sunset-600/40 via-transparent to-transparent flex items-end justify-center pb-4">
+                            <span class="bg-white/85 text-sunset-600 text-xs font-bold px-3 py-1 rounded-full shadow-sm">Vân Anh • 19 tuổi</span>
                         </div>
                     </div>
                 </div>
 
-            </div>
-        </div>
-    </section>
+                <!-- Biography introduction text -->
+                <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
+                    <span class="inline-flex items-center space-x-2 px-3 py-1.5 rounded-full bg-white border border-cozy-200 text-sunset-500 text-xs font-bold uppercase tracking-wider shadow-sm">
+                        <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-400"></i>
+                        <span>Thế giới nhỏ của Vân Anh</span>
+                    </span>
+                    <h1 class="font-serif text-4xl sm:text-5xl font-bold leading-tight text-cozy-900">
+                        Hi, mình là <span class="text-sunset-500 relative inline-block">Vân Anh<span class="absolute left-0 bottom-1 w-full h-2 bg-sunset-200/40 -z-10 rounded-full"></span></span> ✨
+                    </h1>
+                    <p class="text-cozy-800/80 leading-relaxed text-base">
+                        Chào mừng bạn đã ghé thăm góc nhỏ của mình! Mình hiện là cô sinh viên 19 tuổi đầy mộng mơ, đang theo học ngành **Quản trị Kinh doanh** tại **Học viện Công nghệ Bưu chính Viễn thông (PTIT)**. 
+                    </p>
+                    <p class="text-cozy-800/80 leading-relaxed text-base">
+                        Khác với sự năng động thường thấy của khối ngành kinh tế, mình lại mang một tâm hồn hướng nội tuyệt đối: yêu thích sự yên tĩnh mộc mạc, cực kỳ thích cảm giác được quây quần ấm cúng bên gia đình, và... có một xíu lười vận động nữa đó!
+                    </p>
 
-    <!-- MENU CATALOGUE SECTION -->
-    <section id="menu" class="py-20 bg-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            
-            <!-- Section Header -->
-            <div class="text-center max-w-2xl mx-auto space-y-4 mb-12">
-                <span class="text-rose-500 uppercase tracking-widest text-xs font-bold">Thực Đơn Tinh Hoa</span>
-                <h2 class="font-serif text-3xl sm:text-4xl font-bold text-cocoa-900">Danh Mục Bánh Ngọt Ngào</h2>
-                <div class="w-16 h-1 bg-amber-500 mx-auto rounded-full"></div>
-                <p class="text-cocoa-800/70 text-sm sm:text-base">
-                    Được làm tươi mới mỗi buổi sớm. Hãy chọn ngay hương vị yêu thích của bạn để có một ngày ngập tràn hứng khởi.
-                </p>
-            </div>
-
-            <!-- Category Tabs Selector -->
-            <div class="flex flex-wrap justify-center gap-2 mb-10">
-                <button 
-                    @click="selectedCategory = 'all'"
-                    :class="selectedCategory === 'all' ? 'bg-rose-500 text-white shadow-md' : 'bg-cream-100 text-cocoa-800 hover:bg-cream-200'"
-                    class="px-5 py-2.5 rounded-full text-sm font-semibold transition-all flex items-center space-x-2"
-                >
-                    <i data-lucide="grid" class="w-4 h-4"></i>
-                    <span>Tất Cả</span>
-                </button>
-                <button 
-                    @click="selectedCategory = 'cakes'"
-                    :class="selectedCategory === 'cakes' ? 'bg-rose-500 text-white shadow-md' : 'bg-cream-100 text-cocoa-800 hover:bg-cream-200'"
-                    class="px-5 py-2.5 rounded-full text-sm font-semibold transition-all flex items-center space-x-2"
-                >
-                    <i data-lucide="cake" class="w-4 h-4"></i>
-                    <span>Bánh Kem Chúc Mừng</span>
-                </button>
-                <button 
-                    @click="selectedCategory = 'french'"
-                    :class="selectedCategory === 'french' ? 'bg-rose-500 text-white shadow-md' : 'bg-cream-100 text-cocoa-800 hover:bg-cream-200'"
-                    class="px-5 py-2.5 rounded-full text-sm font-semibold transition-all flex items-center space-x-2"
-                >
-                    <i data-lucide="cookie" class="w-4 h-4"></i>
-                    <span>Bánh Pháp & Macarons</span>
-                </button>
-                <button 
-                    @click="selectedCategory = 'cupcakes'"
-                    :class="selectedCategory === 'cupcakes' ? 'bg-rose-500 text-white shadow-md' : 'bg-cream-100 text-cocoa-800 hover:bg-cream-200'"
-                    class="px-5 py-2.5 rounded-full text-sm font-semibold transition-all flex items-center space-x-2"
-                >
-                    <i data-lucide="candy" class="w-4 h-4"></i>
-                    <span>Cupcakes</span>
-                </button>
-                <button 
-                    @click="selectedCategory = 'healthy'"
-                    :class="selectedCategory === 'healthy' ? 'bg-rose-500 text-white shadow-md' : 'bg-cream-100 text-cocoa-800 hover:bg-cream-200'"
-                    class="px-5 py-2.5 rounded-full text-sm font-semibold transition-all flex items-center space-x-2"
-                >
-                    <i data-lucide="heart" class="w-4 h-4"></i>
-                    <span>Ăn Kiêng & Healthy</span>
-                </button>
-            </div>
-
-            <!-- Pastry Cards Grid -->
-            <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                <template x-for="item in pastries" :key="item.id">
-                    <div 
-                        x-show="selectedCategory === 'all' || item.category === selectedCategory"
-                        x-transition:enter="transition ease-out duration-300"
-                        x-transition:enter-start="opacity-0 transform translate-y-4"
-                        x-transition:enter-end="opacity-100 transform translate-y-0"
-                        class="bg-cream-50 rounded-2xl overflow-hidden border border-cream-200/50 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group"
-                    >
-                        <!-- Pastry Image Container -->
-                        <div class="relative overflow-hidden aspect-[4/3] bg-cream-200">
-                            <img 
-                                :src="item.image" 
-                                :alt="item.name"
-                                class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                                @click="selectedPastry = item"
-                            >
-                            <!-- Badge Category -->
-                            <span 
-                                class="absolute top-3 left-3 bg-white/95 backdrop-blur-sm text-amber-700 text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full shadow-sm"
-                                x-text="item.category === 'cakes' ? 'Bánh Kem' : (item.category === 'french' ? 'Bánh Pháp' : (item.category === 'cupcakes' ? 'Cupcakes' : 'Healthy'))"
-                            ></span>
-                            
-                            <!-- Heart favorite button -->
-                            <button class="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/95 backdrop-blur-sm flex items-center justify-center text-rose-500 hover:scale-110 transition-transform shadow-sm">
-                                <i data-lucide="heart" class="w-4.5 h-4.5"></i>
-                            </button>
-                        </div>
-
-                        <!-- Card Body -->
-                        <div class="p-5 flex-1 flex flex-col justify-between">
-                            <div>
-                                <!-- Rating -->
-                                <div class="flex items-center space-x-1 mb-2">
-                                    <div class="flex text-amber-500">
-                                        <i data-lucide="star" class="w-3.5 h-3.5 fill-amber-500"></i>
-                                    </div>
-                                    <span class="text-xs font-bold text-cocoa-800" x-text="item.rating"></span>
-                                    <span class="text-xs text-cocoa-800/50">(45 đánh giá)</span>
-                                </div>
-
-                                <!-- Title -->
-                                <h3 
-                                    class="font-serif font-bold text-lg text-cocoa-900 group-hover:text-rose-500 transition-colors cursor-pointer line-clamp-1" 
-                                    x-text="item.name"
-                                    @click="selectedPastry = item"
-                                ></h3>
-                                
-                                <!-- Mini description -->
-                                <p class="text-xs text-cocoa-800/60 mt-2 mb-4 line-clamp-2" x-text="item.desc"></p>
+                    <!-- Interactive Personality Bar sliders -->
+                    <div class="bg-white/60 p-5 rounded-2xl border border-cozy-200/60 max-w-md mx-auto lg:mx-0 space-y-3 shadow-inner">
+                        <span class="text-xs font-bold text-cozy-700 uppercase block tracking-wider">Chỉ số bản thân:</span>
+                        <!-- stat 1 -->
+                        <div>
+                            <div class="flex justify-between text-xs font-bold mb-1">
+                                <span>Thích sự yên tĩnh</span>
+                                <span class="text-sunset-500">95%</span>
                             </div>
-
-                            <!-- Price and Action -->
-                            <div class="flex items-center justify-between pt-3 border-t border-cream-200/50">
-                                <div>
-                                    <span class="text-xs text-cocoa-800/40 block">Giá bán</span>
-                                    <span class="font-serif font-bold text-rose-500 text-lg" x-text="item.price.toLocaleString('vi-VN') + ' đ'"></span>
-                                </div>
-                                <button 
-                                    @click="addToCart(item)"
-                                    class="w-10 h-10 rounded-full bg-rose-500 text-white flex items-center justify-center hover:bg-rose-600 active:scale-95 transition-all shadow-md shadow-rose-500/10"
-                                    title="Thêm vào giỏ"
-                                >
-                                    <i data-lucide="plus" class="w-5 h-5"></i>
-                                </button>
+                            <div class="h-2 w-full bg-cozy-200 rounded-full overflow-hidden">
+                                <div class="h-full bg-sunset-500 rounded-full" style="width: 95%"></div>
+                            </div>
+                        </div>
+                        <!-- stat 2 -->
+                        <div>
+                            <div class="flex justify-between text-xs font-bold mb-1">
+                                <span>Lười vận động 🏃‍♀️</span>
+                                <span class="text-sunset-500">99%</span>
+                            </div>
+                            <div class="h-2 w-full bg-cozy-200 rounded-full overflow-hidden">
+                                <div class="h-full bg-sunset-500 rounded-full" style="width: 99%"></div>
+                            </div>
+                        </div>
+                        <!-- stat 3 -->
+                        <div>
+                            <div class="flex justify-between text-xs font-bold mb-1">
+                                <span>Yêu gia đình</span>
+                                <span class="text-sunset-500">100%</span>
+                            </div>
+                            <div class="h-2 w-full bg-cozy-200 rounded-full overflow-hidden">
+                                <div class="h-full bg-sunset-500 rounded-full" style="width: 100%"></div>
                             </div>
                         </div>
                     </div>
-                </template>
+                </div>
             </div>
-        </div>
-    </section>
 
-    <!-- INTERACTIVE CUSTOM CAKE BUILDER -->
-    <section id="customizer" class="py-20 bg-cream-100 border-y border-cream-200">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Education Detail Cards and Lifestyle vibe -->
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- Card Education -->
+                <div class="bg-white p-6 sm:p-8 rounded-3xl border border-cozy-200 shadow-lg flex flex-col justify-between space-y-6">
+                    <div class="flex items-start space-x-4">
+                        <div class="w-12 h-12 rounded-2xl bg-cozy-100 flex items-center justify-center text-sunset-500 shrink-0">
+                            <i data-lucide="graduation-cap" class="w-6 h-6"></i>
+                        </div>
+                        <div>
+                            <span class="text-xs text-cozy-700/60 font-bold block uppercase tracking-wider">Học tập & Sự nghiệp</span>
+                            <h3 class="font-serif font-bold text-xl text-cozy-900 mt-1">Hành trình tại PTIT</h3>
+                            <p class="text-sm text-cozy-800/80 mt-2 leading-relaxed">
+                                Ngành Quản trị Kinh doanh dạy mình cách thấu hiểu thị trường, quản lý chiến lược và kỹ năng tư duy logic. Môi trường công nghệ hiện đại tại Học viện Công nghệ Bưu chính Viễn thông mang tới cho mình những người bạn tuyệt vời cùng những bài học đáng giá.
+                            </p>
+                        </div>
+                    </div>
+                    <img class="w-full h-44 object-cover rounded-xl" src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=600&auto=format&fit=crop&q=80" alt="Học tập thư viện">
+                </div>
+
+                <!-- Card Life Philosophy & Quiet Vibe -->
+                <div class="bg-white p-6 sm:p-8 rounded-3xl border border-cozy-200 shadow-lg flex flex-col justify-between space-y-6">
+                    <div class="flex items-start space-x-4">
+                        <div class="w-12 h-12 rounded-2xl bg-cozy-100 flex items-center justify-center text-sunset-500 shrink-0">
+                            <i data-lucide="home" class="w-6 h-6"></i>
+                        </div>
+                        <div>
+                            <span class="text-xs text-cozy-700/60 font-bold block uppercase tracking-wider">Lối sống an yên</span>
+                            <h3 class="font-serif font-bold text-xl text-cozy-900 mt-1">Ấm áp gần gũi gia đình</h3>
+                            <p class="text-sm text-cozy-800/80 mt-2 leading-relaxed">
+                                Mình tin rằng hạnh phúc lớn nhất không nằm ở những điều xa xôi, mà chính là bữa cơm chiều giản dị mẹ nấu, những câu chuyện vui bố kể, và một không gian tĩnh lặng không xô bồ để mình tự nạp lại năng lượng sau những giờ học bận rộn.
+                            </p>
+                        </div>
+                    </div>
+                    <img class="w-full h-44 object-cover rounded-xl" src="https://images.unsplash.com/photo-1513694203232-719a280e022f?w=600&auto=format&fit=crop&q=80" alt="Không gian phòng ngủ bình yên">
+                </div>
+            </div>
+
+            <!-- Interactive call-to-action tabs -->
+            <div class="text-center bg-cozy-100 py-8 px-6 rounded-3xl border border-cozy-200 max-w-xl mx-auto space-y-4">
+                <p class="font-serif text-lg italic text-cozy-800/80">"Hãy cùng mình ghé thăm quê hương Thái Bình hiền hòa hay nghe vài bản nhạc lofi tại góc chill yêu thích của mình nhé!"</p>
+                <div class="flex justify-center gap-4">
+                    <button @click="activeTab = 'hometown'" class="px-6 py-3 bg-sunset-500 hover:bg-sunset-600 text-white rounded-full font-bold shadow-md transition-all text-sm flex items-center space-x-2">
+                        <i data-lucide="compass" class="w-4 h-4"></i>
+                        <span>Ghé thăm quê hương</span>
+                    </button>
+                    <button @click="activeTab = 'chill'" class="px-6 py-3 bg-white border border-cozy-300 text-sunset-500 hover:bg-cozy-50 rounded-full font-bold transition-all text-sm flex items-center space-x-2">
+                        <i data-lucide="coffee" class="w-4 h-4"></i>
+                        <span>Vào góc chill thư giãn</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 2: QUÊ HƯƠNG (MY HOMETOWN - THÁI BÌNH) -->
+        <section x-show="activeTab === 'hometown'" x-cloak x-transition:enter="transition ease-out duration-500 transform" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0" class="space-y-12">
             
-            <div class="text-center max-w-2xl mx-auto space-y-4 mb-12">
-                <span class="text-amber-700 uppercase tracking-widest text-xs font-bold">Sáng Tạo Không Giới Hạn</span>
-                <h2 class="font-serif text-3xl sm:text-4xl font-bold text-cocoa-900">Thiết Kế Chiếc Bánh Riêng Bạn</h2>
-                <div class="w-16 h-1 bg-rose-500 mx-auto rounded-full"></div>
-                <p class="text-cocoa-800/70 text-sm">
-                    Phối ghép hương vị cốt bánh, lớp phủ kem cao cấp, rắc topping yêu thích và thêm lời đề tặng ngọt ngào lên bánh. Chúng tôi sẽ thiết kế và nướng chính xác theo yêu cầu của bạn!
+            <!-- Section Header intro -->
+            <div class="text-center max-w-2xl mx-auto space-y-4">
+                <span class="text-sunset-500 uppercase tracking-widest text-xs font-bold bg-sunset-100 px-3 py-1 rounded-full">Người con quê lúa</span>
+                <h2 class="font-serif text-3xl sm:text-4xl font-bold text-cozy-900">Thái Bình Thân Thương</h2>
+                <div class="w-16 h-1 bg-sunset-500 mx-auto rounded-full"></div>
+                <p class="text-cozy-800/70 text-sm">
+                    Nơi cánh đồng lúa trải dài tận chân trời, vùng đất của những bãi biển phẳng lặng thơ mộng và những con người thuần hậu, mộc mạc, chất phác đầy lòng hiếu khách.
                 </p>
             </div>
 
-            <!-- Dynamic Workspace layout -->
-            <div class="grid lg:grid-cols-12 gap-12 items-stretch">
+            <!-- Golden fields banner background -->
+            <div class="relative rounded-3xl overflow-hidden h-72 sm:h-96 shadow-xl border border-cozy-200">
+                <img src="https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=1200&auto=format&fit=crop&q=80" alt="Cánh đồng lúa chín vàng Thái Bình" class="w-full h-full object-cover">
+                <div class="absolute inset-0 bg-gradient-to-t from-cozy-950/80 via-cozy-950/30 to-transparent flex items-end">
+                    <div class="p-6 sm:p-10 text-white space-y-2">
+                        <span class="bg-amber-500 text-xs font-bold px-3 py-1 rounded-full uppercase">Quê Lúa Thái Bình</span>
+                        <h3 class="font-serif text-2xl sm:text-3xl font-bold">"Thái Bình là đất ăn chơi, Tay bị tay gậy khắp nơi tung hoành..."</h3>
+                        <p class="text-xs text-white/85 max-w-xl">Câu ca dao dẫu mộc mạc nhưng nói lên tinh thần kiên cường, vượt khó và tràn đầy yêu thương của con người quê lúa hiền hòa.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Specialties & Landscape Dynamic Grid -->
+            <div>
+                <h4 class="font-serif text-2xl font-bold text-cozy-900 text-center mb-6">Khám Phá Các Đặc Sản & Cảnh Đẹp Nổi Tiếng</h4>
                 
-                <!-- Left Control Panel (Options) -->
-                <div class="lg:col-span-7 bg-white p-6 sm:p-8 rounded-3xl border border-cream-200 shadow-xl flex flex-col justify-between space-y-8">
-                    <div class="space-y-6">
-                        <!-- Step 1: Sponge Base flavor -->
-                        <div>
-                            <span class="block text-xs font-bold text-amber-700 uppercase tracking-wider mb-3">Bước 1: Chọn Cốt Bánh (Hương vị)</span>
-                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                                <label class="cursor-pointer">
-                                    <input type="radio" name="base" value="vanilla" x-model="cakeCustomizer.base" @change="cakeCustomizer.calculatePrice()" class="sr-only peer">
-                                    <div class="p-3 text-center rounded-xl border-2 border-cream-200 peer-checked:border-amber-500 peer-checked:bg-amber-50/50 hover:bg-cream-50 transition-all">
-                                        <div class="w-8 h-8 rounded-full bg-[#FDF2E9] mx-auto mb-2 border border-stone-200"></div>
-                                        <span class="text-xs font-semibold text-cocoa-800 block">Sữa Vanilla</span>
-                                    </div>
-                                </label>
-                                <label class="cursor-pointer">
-                                    <input type="radio" name="base" value="chocolate" x-model="cakeCustomizer.base" @change="cakeCustomizer.calculatePrice()" class="sr-only peer">
-                                    <div class="p-3 text-center rounded-xl border-2 border-cream-200 peer-checked:border-amber-500 peer-checked:bg-amber-50/50 hover:bg-cream-50 transition-all">
-                                        <div class="w-8 h-8 rounded-full bg-[#5C3A21] mx-auto mb-2 border border-stone-200"></div>
-                                        <span class="text-xs font-semibold text-cocoa-800 block">Chocolate Bỉ</span>
-                                    </div>
-                                </label>
-                                <label class="cursor-pointer">
-                                    <input type="radio" name="base" value="matcha" x-model="cakeCustomizer.base" @change="cakeCustomizer.calculatePrice()" class="sr-only peer">
-                                    <div class="p-3 text-center rounded-xl border-2 border-cream-200 peer-checked:border-amber-500 peer-checked:bg-amber-50/50 hover:bg-cream-50 transition-all">
-                                        <div class="w-8 h-8 rounded-full bg-[#76A035] mx-auto mb-2 border border-stone-200"></div>
-                                        <span class="text-xs font-semibold text-cocoa-800 block">Trà Xanh Uji</span>
-                                    </div>
-                                </label>
-                                <label class="cursor-pointer">
-                                    <input type="radio" name="base" value="redvelvet" x-model="cakeCustomizer.base" @change="cakeCustomizer.calculatePrice()" class="sr-only peer">
-                                    <div class="p-3 text-center rounded-xl border-2 border-cream-200 peer-checked:border-amber-500 peer-checked:bg-amber-50/50 hover:bg-cream-50 transition-all">
-                                        <div class="w-8 h-8 rounded-full bg-[#A62B2B] mx-auto mb-2 border border-stone-200"></div>
-                                        <span class="text-xs font-semibold text-cocoa-800 block">Red Velvet</span>
-                                    </div>
-                                </label>
-                            </div>
-                        </div>
-
-                        <!-- Step 2: Frosting Selection -->
-                        <div>
-                            <span class="block text-xs font-bold text-amber-700 uppercase tracking-wider mb-3">Bước 2: Chọn Lớp Phủ Kem</span>
-                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                                <label class="cursor-pointer">
-                                    <input type="radio" name="frosting" value="strawberry" x-model="cakeCustomizer.frosting" @change="cakeCustomizer.calculatePrice()" class="sr-only peer">
-                                    <div class="p-3 text-center rounded-xl border-2 border-cream-200 peer-checked:border-rose-500 peer-checked:bg-rose-50/50 hover:bg-cream-50 transition-all">
-                                        <div class="w-8 h-8 rounded-full bg-[#FAA4BD] mx-auto mb-2 border border-stone-200"></div>
-                                        <span class="text-xs font-semibold text-cocoa-800 block">Kem Dâu Hồng</span>
-                                    </div>
-                                </label>
-                                <label class="cursor-pointer">
-                                    <input type="radio" name="frosting" value="cheese" x-model="cakeCustomizer.frosting" @change="cakeCustomizer.calculatePrice()" class="sr-only peer">
-                                    <div class="p-3 text-center rounded-xl border-2 border-cream-200 peer-checked:border-rose-500 peer-checked:bg-rose-50/50 hover:bg-cream-50 transition-all">
-                                        <div class="w-8 h-8 rounded-full bg-[#FFF8E7] mx-auto mb-2 border border-stone-200"></div>
-                                        <span class="text-xs font-semibold text-cocoa-800 block">Phô Mai Thụy Sĩ</span>
-                                    </div>
-                                </label>
-                                <label class="cursor-pointer">
-                                    <input type="radio" name="frosting" value="chocolate" x-model="cakeCustomizer.frosting" @change="cakeCustomizer.calculatePrice()" class="sr-only peer">
-                                    <div class="p-3 text-center rounded-xl border-2 border-cream-200 peer-checked:border-rose-500 peer-checked:bg-rose-50/50 hover:bg-cream-50 transition-all">
-                                        <div class="w-8 h-8 rounded-full bg-[#3D2515] mx-auto mb-2 border border-stone-200"></div>
-                                        <span class="text-xs font-semibold text-cocoa-800 block">Kem Socola</span>
-                                    </div>
-                                </label>
-                                <label class="cursor-pointer">
-                                    <input type="radio" name="frosting" value="caramel" x-model="cakeCustomizer.frosting" @change="cakeCustomizer.calculatePrice()" class="sr-only peer">
-                                    <div class="p-3 text-center rounded-xl border-2 border-cream-200 peer-checked:border-rose-500 peer-checked:bg-rose-50/50 hover:bg-cream-50 transition-all">
-                                        <div class="w-8 h-8 rounded-full bg-[#E6A15C] mx-auto mb-2 border border-stone-200"></div>
-                                        <span class="text-xs font-semibold text-cocoa-800 block">Kem Caramel</span>
-                                    </div>
-                                </label>
-                            </div>
-                        </div>
-
-                        <!-- Step 3: Toppings checkboxes -->
-                        <div>
-                            <span class="block text-xs font-bold text-amber-700 uppercase tracking-wider mb-3">Bước 3: Rắc Toppings (+30,000 đ/loại)</span>
-                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                                <label class="cursor-pointer flex items-center p-3 rounded-xl border-2 border-cream-200 peer hover:bg-cream-50 transition-all">
-                                    <input type="checkbox" value="strawberry" x-model="cakeCustomizer.toppings" @change="cakeCustomizer.calculatePrice()" class="rounded border-cream-300 text-rose-500 focus:ring-rose-400 w-4 h-4 mr-3">
-                                    <div>
-                                        <span class="text-xs font-semibold text-cocoa-800 block">Dâu Tây Tươi</span>
-                                        <span class="text-[10px] text-cocoa-800/60">Trang trí mọng nước</span>
-                                    </div>
-                                </label>
-                                <label class="cursor-pointer flex items-center p-3 rounded-xl border-2 border-cream-200 peer hover:bg-cream-50 transition-all">
-                                    <input type="checkbox" value="sprinkle" x-model="cakeCustomizer.toppings" @change="cakeCustomizer.calculatePrice()" class="rounded border-cream-300 text-rose-500 focus:ring-rose-400 w-4 h-4 mr-3">
-                                    <div>
-                                        <span class="text-xs font-semibold text-cocoa-800 block">Kẹo Cốm Ngũ Sắc</span>
-                                        <span class="text-[10px] text-cocoa-800/60">Sặc sỡ vui nhộn</span>
-                                    </div>
-                                </label>
-                                <label class="cursor-pointer flex items-center p-3 rounded-xl border-2 border-cream-200 peer hover:bg-cream-50 transition-all">
-                                    <input type="checkbox" value="chocolatechip" x-model="cakeCustomizer.toppings" @change="cakeCustomizer.calculatePrice()" class="rounded border-cream-300 text-rose-500 focus:ring-rose-400 w-4 h-4 mr-3">
-                                    <div>
-                                        <span class="text-xs font-semibold text-cocoa-800 block">Hạt Socola Chip</span>
-                                        <span class="text-[10px] text-cocoa-800/60">Giòn tan ngậy ngọt</span>
-                                    </div>
-                                </label>
-                            </div>
-                        </div>
-
-                        <!-- Step 4: Write message -->
-                        <div>
-                            <span class="block text-xs font-bold text-amber-700 uppercase tracking-wider mb-2">Bước 4: Viết Lời Chúc Trên Bánh (+20,000 đ)</span>
-                            <input 
-                                type="text" 
-                                placeholder="Ví dụ: Chúc mừng sinh nhật bé yêu! (Tối đa 30 chữ)" 
-                                maxlength="30"
-                                x-model="cakeCustomizer.text"
-                                @input="cakeCustomizer.calculatePrice()"
-                                class="w-full px-4 py-3 rounded-xl border border-cream-300 text-sm focus:outline-none focus:ring-2 focus:ring-rose-400 focus:border-transparent"
-                            >
-                        </div>
-                    </div>
-
-                    <!-- Price summary and Action Add to Box -->
-                    <div class="pt-6 border-t border-cream-200/60 flex flex-col sm:flex-row items-center justify-between gap-4">
-                        <div>
-                            <span class="text-xs text-cocoa-800/50 block">Ước tính giá trị bánh thiết kế</span>
-                            <span class="font-serif font-bold text-2xl text-rose-500" x-text="cakeCustomizer.price.toLocaleString('vi-VN') + ' đ'"></span>
-                        </div>
-                        <button 
-                            @click="addToCart({
-                                id: 999,
-                                name: 'Bánh Thiết Kế SweetJoy Custom',
-                                price: cakeCustomizer.price,
-                                image: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=500&auto=format&fit=crop&q=80',
-                                details: 'Cốt: ' + cakeCustomizer.base + ', Kem: ' + cakeCustomizer.frosting + ', Topping: ' + cakeCustomizer.toppings.join(', ') + (cakeCustomizer.text ? ', Lời chúc: ' + cakeCustomizer.text : '')
-                            }, true)"
-                            class="w-full sm:w-auto px-8 py-3.5 bg-rose-500 text-white font-bold rounded-xl shadow-lg hover:bg-rose-600 active:scale-95 transition-all text-center flex items-center justify-center space-x-2"
+                <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <template x-for="item in hometownItems" :key="item.id">
+                        <div 
+                            @click="hometownDetail = item"
+                            class="bg-white rounded-2xl overflow-hidden border border-cozy-200 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer flex flex-col justify-between group"
                         >
-                            <i data-lucide="shopping-cart" class="w-5 h-5"></i>
-                            <span>Thêm Bánh Custom Vào Giỏ</span>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Right Live Preview (SVG Cake Display) -->
-                <div class="lg:col-span-5 bg-white p-6 rounded-3xl border border-cream-200 shadow-xl flex flex-col justify-center items-center text-center relative overflow-hidden">
-                    <div class="absolute inset-0 bg-radial-gradient from-cream-50 to-white opacity-40 pointer-events-none"></div>
-                    
-                    <span class="text-xs font-bold text-amber-700 bg-amber-50 px-3 py-1 rounded-full mb-4 relative z-10">Bản Xem Trước Thiết Kế 2D</span>
-                    
-                    <!-- DYNAMIC SVG CAKE -->
-                    <div class="w-full max-w-[280px] sm:max-w-[320px] aspect-square relative z-10 my-4 flex justify-center items-center">
-                        <svg viewBox="0 0 300 300" class="w-full h-full drop-shadow-2xl">
-                            <!-- Cake Stand -->
-                            <path d="M 50,250 L 250,250 L 230,265 L 70,265 Z" fill="#E2E8F0" />
-                            <rect x="135" y="265" width="30" height="20" fill="#CBD5E1" />
-                            <ellipse cx="150" cy="285" rx="50" ry="8" fill="#94A3B8" />
-
-                            <!-- LAYER 1 (Bottom Sponge) -->
-                            <rect x="75" y="190" width="150" height="60" rx="4" :fill="cakeCustomizer.getBaseColor()" />
-                            <!-- Bottom Sponge Details / Cream filling line -->
-                            <line x1="75" y1="220" x2="225" y2="220" stroke="#FFFFFF" stroke-width="4" stroke-dasharray="8 4" opacity="0.8" />
-
-                            <!-- LAYER 2 (Frosting Layer over top layer) -->
-                            <path d="M 70,185 C 70,185 85,195 100,185 C 115,175 130,190 150,185 C 170,180 185,195 200,185 C 215,175 230,185 230,185 L 230,195 L 70,195 Z" :fill="cakeCustomizer.getFrostingColor()" />
-
-                            <!-- LAYER 3 (Top Cream frosting & drips) -->
-                            <path d="M 72,130 L 228,130 L 228,155 L 72,155 Z" :fill="cakeCustomizer.getFrostingColor()" />
-                            <rect x="72" y="130" width="156" height="30" rx="3" :fill="cakeCustomizer.getFrostingColor()" />
-                            
-                            <!-- Dynamic drips -->
-                            <path d="M 72,160 Q 85,175 90,160 Q 110,180 120,160 Q 140,175 150,160 Q 170,185 180,160 Q 200,175 210,160 Q 220,175 228,160" :fill="cakeCustomizer.getFrostingColor()" />
-
-                            <!-- TOPPING: Strawberry -->
-                            <g x-show="cakeCustomizer.toppings.includes('strawberry')" x-transition>
-                                <!-- Left strawberry -->
-                                <path d="M 95,115 C 90,100 110,100 105,115 Z" fill="#E11D48" />
-                                <circle cx="98" cy="110" r="1" fill="#FEF08A" />
-                                <circle cx="102" cy="107" r="1" fill="#FEF08A" />
-                                <path d="M 98,103 Q 100,95 102,103" stroke="#22C55E" stroke-width="2" fill="none" />
-                                <!-- Center strawberry -->
-                                <path d="M 150,115 C 145,100 165,100 160,115 Z" fill="#E11D48" />
-                                <circle cx="153" cy="110" r="1" fill="#FEF08A" />
-                                <circle cx="157" cy="107" r="1" fill="#FEF08A" />
-                                <path d="M 153,103 Q 155,95 157,103" stroke="#22C55E" stroke-width="2" fill="none" />
-                                <!-- Right strawberry -->
-                                <path d="M 205,115 C 200,100 220,100 215,115 Z" fill="#E11D48" />
-                                <circle cx="208" cy="110" r="1" fill="#FEF08A" />
-                                <circle cx="212" cy="107" r="1" fill="#FEF08A" />
-                                <path d="M 208,103 Q 210,95 212,103" stroke="#22C55E" stroke-width="2" fill="none" />
-                            </g>
-
-                            <!-- TOPPING: Sprinkles -->
-                            <g x-show="cakeCustomizer.toppings.includes('sprinkle')" x-transition>
-                                <rect x="90" y="140" width="8" height="3" rx="1.5" fill="#3B82F6" transform="rotate(15 90 140)" />
-                                <rect x="130" y="145" width="8" height="3" rx="1.5" fill="#EAB308" transform="rotate(-30 130 145)" />
-                                <rect x="170" y="138" width="8" height="3" rx="1.5" fill="#EC4899" transform="rotate(45 170 138)" />
-                                <rect x="210" y="142" width="8" height="3" rx="1.5" fill="#10B981" transform="rotate(-15 210 142)" />
-                                <rect x="110" y="150" width="8" height="3" rx="1.5" fill="#F43F5E" transform="rotate(10 110 150)" />
-                                <rect x="150" y="148" width="8" height="3" rx="1.5" fill="#8B5CF6" transform="rotate(-40 150 148)" />
-                                <rect x="190" y="152" width="8" height="3" rx="1.5" fill="#06B6D4" transform="rotate(25 190 152)" />
-                            </g>
-
-                            <!-- TOPPING: Chocolate Chip -->
-                            <g x-show="cakeCustomizer.toppings.includes('chocolatechip')" x-transition>
-                                <circle cx="85" cy="142" r="3" fill="#3D2515" />
-                                <circle cx="105" cy="151" r="3" fill="#3D2515" />
-                                <circle cx="125" cy="144" r="3" fill="#3D2515" />
-                                <circle cx="145" cy="153" r="3" fill="#3D2515" />
-                                <circle cx="165" cy="141" r="3" fill="#3D2515" />
-                                <circle cx="185" cy="149" r="3" fill="#3D2515" />
-                                <circle cx="205" cy="143" r="3" fill="#3D2515" />
-                            </g>
-
-                            <!-- Writing Board / Text Display -->
-                            <g x-show="cakeCustomizer.text.length > 0">
-                                <rect x="85" y="210" width="130" height="25" rx="4" fill="#FEF08A" opacity="0.95" />
-                                <text x="150" y="227" font-family="'Playfair Display', serif" font-size="9" font-weight="bold" fill="#B45309" text-anchor="middle" x-text="cakeCustomizer.text"></text>
-                            </g>
-                        </svg>
-                    </div>
-
-                    <!-- Selected details status info -->
-                    <div class="space-y-1 relative z-10 w-full">
-                        <span class="block text-sm font-semibold text-cocoa-900">
-                            Cốt: <span class="capitalize text-rose-500" x-text="cakeCustomizer.base"></span>
-                        </span>
-                        <span class="block text-sm font-semibold text-cocoa-900">
-                            Lớp phủ: <span class="capitalize text-rose-500" x-text="cakeCustomizer.frosting"></span>
-                        </span>
-                        <span class="block text-sm font-semibold text-cocoa-900">
-                            Toppings: <span class="text-rose-500" x-text="cakeCustomizer.toppings.length > 0 ? cakeCustomizer.toppings.join(', ') : 'Trơn'"></span>
-                        </span>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-    </section>
-
-    <!-- PASTRY MOOD QUIZ SECTION -->
-    <section id="quiz" class="py-20 bg-white">
-        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="bg-gradient-to-br from-rose-50 to-amber-50 rounded-3xl p-8 sm:p-12 border border-rose-100 shadow-xl relative overflow-hidden">
-                <div class="absolute inset-0 bg-[radial-gradient(#f43f5e_1px,transparent_1px)] [background-size:16px_16px] opacity-10"></div>
-                
-                <div class="relative z-10">
-                    <!-- Heading -->
-                    <div class="text-center space-y-3 mb-8">
-                        <span class="text-xs font-bold text-rose-500 bg-rose-100 px-3 py-1 rounded-full uppercase tracking-wider">Trò Chơi Tương Tác</span>
-                        <h2 class="font-serif text-3xl font-bold text-cocoa-900">Hôm Nay Bạn Nên Ăn Bánh Gì?</h2>
-                        <p class="text-cocoa-800/70 text-sm">Chỉ mất 15 giây trắc nghiệm tâm trạng để tìm thấy "nửa kia" ngọt ngào của bạn.</p>
-                    </div>
-
-                    <!-- Step 1: Mood selection -->
-                    <div x-show="quiz.step === 1" x-transition class="space-y-6">
-                        <h3 class="text-center font-serif text-xl font-semibold text-cocoa-800">1. Tâm trạng hiện tại của bạn thế nào?</h3>
-                        <div class="grid grid-cols-2 gap-4 max-w-md mx-auto">
-                            <button @click="quiz.submitAnswer('mood', 'energetic')" class="p-4 bg-white hover:bg-rose-50 border border-cream-200 hover:border-rose-400 rounded-2xl text-center font-medium shadow-sm transition-all text-sm flex flex-col items-center">
-                                <span class="text-2xl mb-2">⚡</span> Đầy Năng Lượng
-                            </button>
-                            <button @click="quiz.submitAnswer('mood', 'romantic')" class="p-4 bg-white hover:bg-rose-50 border border-cream-200 hover:border-rose-400 rounded-2xl text-center font-medium shadow-sm transition-all text-sm flex flex-col items-center">
-                                <span class="text-2xl mb-2">💖</span> Lãng Mạn, Bay Bổng
-                            </button>
-                            <button @click="quiz.submitAnswer('mood', 'comfort')" class="p-4 bg-white hover:bg-rose-50 border border-cream-200 hover:border-rose-400 rounded-2xl text-center font-medium shadow-sm transition-all text-sm flex flex-col items-center">
-                                <span class="text-2xl mb-2">🧸</span> Cần Vỗ Về, Yên Bình
-                            </button>
-                            <button @click="quiz.submitAnswer('mood', 'relaxed')" class="p-4 bg-white hover:bg-rose-50 border border-cream-200 hover:border-rose-400 rounded-2xl text-center font-medium shadow-sm transition-all text-sm flex flex-col items-center">
-                                <span class="text-2xl mb-2">🍃</span> Thư Thái, Nhẹ Nhàng
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Step 2: Sweetness level preference -->
-                    <div x-show="quiz.step === 2" x-transition class="space-y-6">
-                        <h3 class="text-center font-serif text-xl font-semibold text-cocoa-800">2. Bạn thích độ ngọt ở mức nào?</h3>
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-lg mx-auto">
-                            <button @click="quiz.submitAnswer('sweet', 'light')" class="p-4 bg-white hover:bg-rose-50 border border-cream-200 hover:border-rose-400 rounded-2xl text-center font-medium shadow-sm transition-all text-sm flex flex-col items-center">
-                                <span class="text-2xl mb-2">🌱</span> Ngọt Thanh / Rất Ít Ngọt
-                            </button>
-                            <button @click="quiz.submitAnswer('sweet', 'fruity')" class="p-4 bg-white hover:bg-rose-50 border border-cream-200 hover:border-rose-400 rounded-2xl text-center font-medium shadow-sm transition-all text-sm flex flex-col items-center">
-                                <span class="text-2xl mb-2">🍓</span> Chua Ngọt Tự Nhiên (Trái Cây)
-                            </button>
-                            <button @click="quiz.submitAnswer('sweet', 'rich')" class="p-4 bg-white hover:bg-rose-50 border border-cream-200 hover:border-rose-400 rounded-2xl text-center font-medium shadow-sm transition-all text-sm flex flex-col items-center">
-                                <span class="text-2xl mb-2">🍫</span> Đậm Đà / Béo Ngậy Cực Hạn
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Step 3: Beverage pairing -->
-                    <div x-show="quiz.step === 3" x-transition class="space-y-6">
-                        <h3 class="text-center font-serif text-xl font-semibold text-cocoa-800">3. Bạn định thưởng thức bánh cùng đồ uống gì?</h3>
-                        <div class="grid grid-cols-2 gap-4 max-w-md mx-auto">
-                            <button @click="quiz.submitAnswer('drink', 'tea')" class="p-4 bg-white hover:bg-rose-50 border border-cream-200 hover:border-rose-400 rounded-2xl text-center font-medium shadow-sm transition-all text-sm flex flex-col items-center">
-                                <span class="text-2xl mb-2">🍵</span> Trà Ấm (Matcha/Trà Anh)
-                            </button>
-                            <button @click="quiz.submitAnswer('drink', 'coffee')" class="p-4 bg-white hover:bg-rose-50 border border-cream-200 hover:border-rose-400 rounded-2xl text-center font-medium shadow-sm transition-all text-sm flex flex-col items-center">
-                                <span class="text-2xl mb-2">☕</span> Cà Phê Đen / Espresso
-                            </button>
-                            <button @click="quiz.submitAnswer('drink', 'milk')" class="p-4 bg-white hover:bg-rose-50 border border-cream-200 hover:border-rose-400 rounded-2xl text-center font-medium shadow-sm transition-all text-sm flex flex-col items-center">
-                                <span class="text-2xl mb-2">🥛</span> Sữa Tươi / Trà Sữa
-                            </button>
-                            <button @click="quiz.submitAnswer('drink', 'wine')" class="p-4 bg-white hover:bg-rose-50 border border-cream-200 hover:border-rose-400 rounded-2xl text-center font-medium shadow-sm transition-all text-sm flex flex-col items-center">
-                                <span class="text-2xl mb-2">🥂</span> Rượu Vang / Champagne
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Step 4: Display recommendation -->
-                    <div x-show="quiz.recommendation !== null" x-transition class="space-y-6 text-center">
-                        <span class="text-5xl">🎉</span>
-                        <h3 class="font-serif text-xl text-cocoa-800">SweetJoy Đề Xuất Loại Bánh Cho Bạn:</h3>
-                        
-                        <!-- Recommendation card -->
-                        <div class="max-w-md mx-auto bg-white rounded-2xl overflow-hidden border border-rose-100 shadow-lg p-5 flex flex-col sm:flex-row items-center gap-5">
-                            <img :src="quiz.recommendation?.image" class="w-28 h-28 object-cover rounded-xl shadow-inner">
-                            <div class="text-left space-y-2">
-                                <h4 class="font-serif font-bold text-lg text-rose-500" x-text="quiz.recommendation?.name"></h4>
-                                <p class="text-xs text-cocoa-800/70" x-text="quiz.recommendation?.desc"></p>
-                                <span class="font-bold text-cocoa-900 block" x-text="quiz.recommendation?.price.toLocaleString('vi-VN') + ' đ'"></span>
+                            <div class="relative overflow-hidden aspect-[4/3] bg-cozy-200">
+                                <img :src="item.image" :alt="item.title" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                                <span class="absolute top-3 left-3 bg-white/90 backdrop-blur-sm text-sunset-600 text-[10px] font-bold px-2 py-0.5 rounded-full" x-text="item.type"></span>
+                            </div>
+                            <div class="p-5 flex-1 flex flex-col justify-between space-y-3">
+                                <div>
+                                    <h5 class="font-serif font-bold text-lg text-cozy-900 group-hover:text-sunset-500 transition-colors" x-text="item.title"></h5>
+                                    <p class="text-xs text-cozy-800/60 line-clamp-2 mt-1" x-text="item.desc"></p>
+                                </div>
+                                <span class="text-xs text-sunset-500 font-bold flex items-center group-hover:underline">
+                                    <span>Xem chi tiết</span>
+                                    <i data-lucide="chevron-right" class="w-3.5 h-3.5 ml-0.5"></i>
+                                </span>
                             </div>
                         </div>
-
-                        <!-- Action Controls -->
-                        <div class="flex items-center justify-center gap-4 max-w-md mx-auto">
-                            <button 
-                                @click="addToCart({ id: Math.random(), name: quiz.recommendation.name, price: quiz.recommendation.price, image: quiz.recommendation.image })"
-                                class="px-6 py-3 bg-rose-500 text-white font-bold rounded-xl shadow-md hover:bg-rose-600 transition-all flex items-center space-x-2"
-                            >
-                                <i data-lucide="plus" class="w-4 h-4"></i>
-                                <span>Thêm vào giỏ</span>
-                            </button>
-                            <button 
-                                @click="quiz.reset()" 
-                                class="px-6 py-3 bg-white text-cocoa-800 border border-cream-300 font-bold rounded-xl hover:bg-cream-50 transition-all"
-                            >
-                                Thử lại
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Progress Indicator Bar -->
-                    <div x-show="quiz.recommendation === null" class="mt-8 max-w-xs mx-auto">
-                        <div class="flex justify-between text-[10px] font-bold text-cocoa-800/50 mb-1 uppercase">
-                            <span>Bắt đầu</span>
-                            <span>Hoàn thành</span>
-                        </div>
-                        <div class="h-1.5 w-full bg-cream-200 rounded-full overflow-hidden">
-                            <div 
-                                class="h-full bg-rose-500 transition-all duration-300"
-                                :style="'width: ' + ((quiz.step - 1) / 3 * 100) + '%'"
-                            ></div>
-                        </div>
-                    </div>
-
+                    </template>
                 </div>
             </div>
-        </div>
-    </section>
 
-    <!-- PHILOSOPHY / OUR STORY -->
-    <section id="story" class="py-20 bg-cream-50 border-t border-cream-200/50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid lg:grid-cols-12 gap-12 items-center">
-                
-                <!-- Left visuals -->
-                <div class="lg:col-span-6 grid grid-cols-2 gap-4">
-                    <div class="space-y-4">
-                        <img class="w-full h-64 object-cover rounded-2xl shadow-md" src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=500&auto=format&fit=crop&q=80" alt="Bột bánh nướng">
-                        <img class="w-full h-40 object-cover rounded-2xl shadow-md" src="https://images.unsplash.com/photo-1517433456452-f9633a875f6f?w=500&auto=format&fit=crop&q=80" alt="Trang trí dâu tây">
-                    </div>
-                    <div class="pt-8 space-y-4">
-                        <img class="w-full h-40 object-cover rounded-2xl shadow-md" src="https://images.unsplash.com/photo-1621303837174-89787a7d4729?w=500&auto=format&fit=crop&q=80" alt="Bánh nướng xốp">
-                        <img class="w-full h-64 object-cover rounded-2xl shadow-md" src="https://images.unsplash.com/photo-1509440159596-0249088772ff?w=500&auto=format&fit=crop&q=80" alt="Nướng bánh chuyên nghiệp">
-                    </div>
-                </div>
-
-                <!-- Right Copywriting philosophy -->
-                <div class="lg:col-span-6 space-y-6">
-                    <span class="text-rose-500 uppercase tracking-widest text-xs font-bold">Về SweetJoy Patisserie</span>
-                    <h2 class="font-serif text-3xl sm:text-4xl font-bold text-cocoa-900 leading-tight">Mỗi Chiếc Bánh Là Một Bản Tình Ca Nghệ Thuật</h2>
-                    <p class="text-cocoa-800/80 text-sm sm:text-base leading-relaxed">
-                        Thương hiệu **SweetJoy** được khai sinh từ niềm đam mê tột cùng với văn hóa ẩm thực bánh ngọt Pháp cổ điển. Chúng tôi trân quý từng giọt mật, từng lát bơ để mang lại những chiếc bánh không chỉ ngon ở đầu lưỡi mà còn chạm sâu vào xúc cảm mỗi thực khách.
-                    </p>
-                    <p class="text-cocoa-800/80 text-sm sm:text-base leading-relaxed">
-                        Nói KHÔNG với chất bảo quản, phụ gia thực phẩm độc hại. Toàn bộ bánh tại cửa hàng được chế tác tươi mới thủ công 100% từng mẻ bởi bếp trưởng bánh ngọt xuất sắc từng tu nghiệp tại trường chuyên nghệ thuật Paris Cordon Bleu.
-                    </p>
-
-                    <!-- Core value perks grid -->
-                    <div class="grid grid-cols-2 gap-4 pt-4 border-t border-cream-200">
-                        <div class="flex items-start space-x-3">
-                            <div class="w-8 h-8 rounded-full bg-rose-50 flex items-center justify-center text-rose-500 shrink-0">
-                                <i data-lucide="shield-check" class="w-4 h-4"></i>
-                            </div>
-                            <div>
-                                <span class="block font-bold text-sm text-cocoa-900">Chuẩn ATVSTP</span>
-                                <span class="text-xs text-cocoa-800/60">An toàn tuyệt đối</span>
-                            </div>
-                        </div>
-                        <div class="flex items-start space-x-3">
-                            <div class="w-8 h-8 rounded-full bg-rose-50 flex items-center justify-center text-rose-500 shrink-0">
-                                <i data-lucide="truck" class="w-4 h-4"></i>
-                            </div>
-                            <div>
-                                <span class="block font-bold text-sm text-cocoa-900">Giao Hỏa Tốc</span>
-                                <span class="text-xs text-cocoa-800/60">Cam kết bảo quản lạnh</span>
-                            </div>
+            <!-- Honest People and Soul -->
+            <div class="bg-white p-6 sm:p-10 rounded-3xl border border-cozy-200 shadow-md">
+                <div class="grid md:grid-cols-12 gap-8 items-center">
+                    <div class="md:col-span-4 flex justify-center">
+                        <div class="w-36 h-36 rounded-full bg-sunset-100 flex items-center justify-center text-sunset-500">
+                            <i data-lucide="heart" class="w-16 h-16 stroke-[1.5]"></i>
                         </div>
                     </div>
-                </div>
-
-            </div>
-        </div>
-    </section>
-
-    <!-- CUSTOMER REVIEWS -->
-    <section class="py-20 bg-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center max-w-2xl mx-auto space-y-4 mb-12">
-                <span class="text-rose-500 uppercase tracking-widest text-xs font-bold font-sans">Lời Yêu Thương</span>
-                <h2 class="font-serif text-3xl font-bold text-cocoa-900">Đánh Giá Từ Khách Hàng Thân Yêu</h2>
-                <div class="w-16 h-1 bg-amber-500 mx-auto rounded-full"></div>
-            </div>
-
-            <div class="grid md:grid-cols-3 gap-8">
-                <!-- Testimonial 1 -->
-                <div class="bg-cream-50 p-6 rounded-2xl border border-cream-200/50 relative">
-                    <div class="flex text-amber-500 mb-4">
-                        <i data-lucide="star" class="w-4 h-4 fill-amber-500"></i>
-                        <i data-lucide="star" class="w-4 h-4 fill-amber-500"></i>
-                        <i data-lucide="star" class="w-4 h-4 fill-amber-500"></i>
-                        <i data-lucide="star" class="w-4 h-4 fill-amber-500"></i>
-                        <i data-lucide="star" class="w-4 h-4 fill-amber-500"></i>
-                    </div>
-                    <p class="text-sm text-cocoa-800/80 italic mb-6">
-                        "Bánh Mousse Dâu Tây thực sự rất ngon! Vị ngọt vừa vặn không hề ngấy, dâu tây cực kì tươi mọng. Bao bì cũng vô cùng sang chảnh nữa, rất phù hợp đem làm quà biếu tặng đối tác."
-                    </p>
-                    <div class="flex items-center space-x-3">
-                        <img class="w-10 h-10 rounded-full object-cover" src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&auto=format&fit=crop&q=80" alt="Khách hàng">
-                        <div>
-                            <span class="block font-bold text-xs text-cocoa-900">Nguyễn Thu Hà</span>
-                            <span class="text-[10px] text-cocoa-800/50">Hà Nội</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Testimonial 2 -->
-                <div class="bg-cream-50 p-6 rounded-2xl border border-cream-200/50 relative">
-                    <div class="flex text-amber-500 mb-4">
-                        <i data-lucide="star" class="w-4 h-4 fill-amber-500"></i>
-                        <i data-lucide="star" class="w-4 h-4 fill-amber-500"></i>
-                        <i data-lucide="star" class="w-4 h-4 fill-amber-500"></i>
-                        <i data-lucide="star" class="w-4 h-4 fill-amber-500"></i>
-                        <i data-lucide="star" class="w-4 h-4 fill-amber-500"></i>
-                    </div>
-                    <p class="text-sm text-cocoa-800/80 italic mb-6">
-                        "Tính năng tự chọn Custom bánh kem siêu độc lạ luôn, nhà mình thích ăn kem cheese cốt matcha thế là đặt đúng ý. Giao bánh đúng giờ hẹn, kem vẫn giữ form cực xinh!"
-                    </p>
-                    <div class="flex items-center space-x-3">
-                        <img class="w-10 h-10 rounded-full object-cover" src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=100&auto=format&fit=crop&q=80" alt="Khách hàng">
-                        <div>
-                            <span class="block font-bold text-xs text-cocoa-900">Trần Duy Mạnh</span>
-                            <span class="text-[10px] text-cocoa-800/50">Đà Nẵng</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Testimonial 3 -->
-                <div class="bg-cream-50 p-6 rounded-2xl border border-cream-200/50 relative">
-                    <div class="flex text-amber-500 mb-4">
-                        <i data-lucide="star" class="w-4 h-4 fill-amber-500"></i>
-                        <i data-lucide="star" class="w-4 h-4 fill-amber-500"></i>
-                        <i data-lucide="star" class="w-4 h-4 fill-amber-500"></i>
-                        <i data-lucide="star" class="w-4 h-4 fill-amber-500"></i>
-                        <i data-lucide="star" class="w-4.5 h-4.5 text-amber-300"></i>
-                    </div>
-                    <p class="text-sm text-cocoa-800/80 italic mb-6">
-                        "Bánh sừng bò ngàn lớp thơm ngậy hương bơ Pháp. Sáng sớm pha ly cà phê sữa nóng ăn kèm cái croissant này là tuyệt cú mèo cho ngày mới."
-                    </p>
-                    <div class="flex items-center space-x-3">
-                        <img class="w-10 h-10 rounded-full object-cover" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" alt="Khách hàng">
-                        <div>
-                            <span class="block font-bold text-xs text-cocoa-900">Hoàng Mỹ Linh</span>
-                            <span class="text-[10px] text-cocoa-800/50">TP. Hồ Chí Minh</span>
-                        </div>
+                    <div class="md:col-span-8 space-y-4">
+                        <h4 class="font-serif text-2xl font-bold text-cozy-900">Con Người Hiền Hậu, Chất Phác</h4>
+                        <p class="text-sm text-cozy-800/80 leading-relaxed">
+                            Có một điều đặc trưng làm bất cứ ai từng đặt chân tới Thái Bình cũng lưu luyến, chính là nụ cười nhân hậu và lòng mến khách tuyệt vời của bà con nông dân. Người Thái Bình bộc trực, không màu mè, luôn trao gửi chân tình một cách tự nhiên như hạt gạo đồng quê thơm dẻo.
+                        </p>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- NEWSLETTER & CONTACT FORM -->
-    <section id="contact" class="py-16 bg-cream-100 border-t border-cream-200">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid lg:grid-cols-12 gap-12 items-stretch">
-                
-                <!-- Contact info details -->
-                <div class="lg:col-span-5 space-y-6">
-                    <h3 class="font-serif text-2xl font-bold text-cocoa-900">Liên Hệ SweetJoy</h3>
-                    <p class="text-sm text-cocoa-800/70">
-                        Vui lòng để lại tin nhắn hoặc gọi trực tiếp cho chúng tôi qua hotline để đặt bánh tiệc sự kiện, hội nghị hoặc đám cưới lớn.
-                    </p>
-                    
-                    <div class="space-y-4 pt-4">
-                        <div class="flex items-start space-x-3">
-                            <div class="w-10 h-10 rounded-full bg-rose-100 flex items-center justify-center text-rose-500 shrink-0">
-                                <i data-lucide="map-pin" class="w-5 h-5"></i>
-                            </div>
-                            <div>
-                                <span class="block font-bold text-sm text-cocoa-900">Chi Nhánh Chính</span>
-                                <span class="text-xs text-cocoa-800/70">12 Tràng Tiền, Quận Hoàn Kiếm, Hà Nội</span>
-                            </div>
-                        </div>
-
-                        <div class="flex items-start space-x-3">
-                            <div class="w-10 h-10 rounded-full bg-rose-100 flex items-center justify-center text-rose-500 shrink-0">
-                                <i data-lucide="mail" class="w-5 h-5"></i>
-                            </div>
-                            <div>
-                                <span class="block font-bold text-sm text-cocoa-900">Email Hỗ Trợ</span>
-                                <span class="text-xs text-cocoa-800/70">hello@sweetjoypatisserie.com</span>
-                            </div>
-                        </div>
-
-                        <div class="flex items-start space-x-3">
-                            <div class="w-10 h-10 rounded-full bg-rose-100 flex items-center justify-center text-rose-500 shrink-0">
-                                <i data-lucide="clock" class="w-5 h-5"></i>
-                            </div>
-                            <div>
-                                <span class="block font-bold text-sm text-cocoa-900">Giờ Mở Cửa</span>
-                                <span class="text-xs text-cocoa-800/70">Mở cửa hàng ngày: 07:00 - 22:00</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Contact form / booking custom request -->
-                <div class="lg:col-span-7 bg-white p-6 sm:p-8 rounded-2xl border border-cream-200 shadow-lg">
-                    <h4 class="font-serif text-xl font-bold text-cocoa-900 mb-6">Đặt Tiệc Bánh / Đóng Góp Ý Kiến</h4>
-                    <form @submit.prevent="alert('Cảm ơn ý kiến đóng góp! SweetJoy sẽ liên hệ lại bạn trong vòng 30 phút.')" class="space-y-4">
-                        <div class="grid sm:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-xs font-bold text-cocoa-800/70 mb-1">Họ và tên *</label>
-                                <input required type="text" class="w-full px-4 py-2.5 rounded-xl border border-cream-200 text-sm focus:ring-1 focus:ring-rose-500 focus:outline-none" placeholder="Nguyễn Văn A">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold text-cocoa-800/70 mb-1">Số điện thoại *</label>
-                                <input required type="tel" class="w-full px-4 py-2.5 rounded-xl border border-cream-200 text-sm focus:ring-1 focus:ring-rose-500 focus:outline-none" placeholder="0987xxxxxx">
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-cocoa-800/70 mb-1">Email (Không bắt buộc)</label>
-                            <input type="email" class="w-full px-4 py-2.5 rounded-xl border border-cream-200 text-sm focus:ring-1 focus:ring-rose-500 focus:outline-none" placeholder="abc@gmail.com">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-cocoa-800/70 mb-1">Nội dung tin nhắn / Yêu cầu đặt tiệc *</label>
-                            <textarea required rows="4" class="w-full px-4 py-2.5 rounded-xl border border-cream-200 text-sm focus:ring-1 focus:ring-rose-500 focus:outline-none" placeholder="Tôi muốn đặt tiệc bánh trà chiều tầm 20 người vào chủ nhật tuần này..."></textarea>
-                        </div>
-                        <button type="submit" class="w-full py-3 bg-amber-700 text-white font-bold rounded-xl shadow-md hover:bg-amber-800 transition-all text-center">
-                            Gửi yêu cầu ngay
-                        </button>
-                    </form>
-                </div>
-
-            </div>
-        </div>
-    </section>
-
-    <!-- REAL FOOTER BAR -->
-    <footer class="bg-cocoa-900 text-cream-100 py-12">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-4 gap-8 mb-8 border-b border-white/10 pb-12">
-            <div class="space-y-4">
-                <div class="flex items-center space-x-2">
-                    <div class="w-8 h-8 rounded-full bg-rose-500 flex items-center justify-center text-white font-serif font-bold text-lg">S</div>
-                    <span class="font-serif font-bold text-xl tracking-wide text-rose-500">SweetJoy</span>
-                </div>
-                <p class="text-xs text-cream-100/60 leading-relaxed">
-                    Nâng tầm khoảnh khắc bằng sự ngọt ngào diệu kỳ tinh khiết nhất.
+        <!-- TAB 3: GÓC CHILL (MY COZY CORNER) -->
+        <section x-show="activeTab === 'chill'" x-cloak x-transition:enter="transition ease-out duration-500 transform" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0" class="space-y-12">
+            
+            <div class="text-center max-w-2xl mx-auto space-y-4">
+                <span class="text-sunset-500 uppercase tracking-widest text-xs font-bold bg-sunset-100 px-3 py-1 rounded-full">Nơi thư giãn tâm hồn</span>
+                <h2 class="font-serif text-3xl sm:text-4xl font-bold text-cozy-900">Góc Chill Của Vân Anh</h2>
+                <div class="w-16 h-1 bg-sunset-500 mx-auto rounded-full"></div>
+                <p class="text-cozy-800/70 text-sm">
+                    Nơi mình tạm gác lại những con số KPI, chiến lược tiếp thị của ngành Quản trị Kinh doanh để hòa mình vào những giai điệu lofi và thế giới lãng mạn K-Drama dịu ngọt.
                 </p>
-                <!-- Social Icons -->
-                <div class="flex space-x-3 text-cream-100/60">
-                    <a href="#" class="hover:text-rose-500 transition-colors"><i data-lucide="facebook" class="w-4 h-4"></i></a>
-                    <a href="#" class="hover:text-rose-500 transition-colors"><i data-lucide="instagram" class="w-4 h-4"></i></a>
-                    <a href="#" class="hover:text-rose-500 transition-colors"><i data-lucide="twitter" class="w-4 h-4"></i></a>
+            </div>
+
+            <!-- Interactive Lofi Music player layout -->
+            <div class="grid lg:grid-cols-12 gap-8 items-stretch">
+                
+                <!-- Left: Lofi Player Simulator -->
+                <div class="lg:col-span-5 bg-gradient-to-b from-[#2D2A26] to-[#1F1D1B] text-white p-6 sm:p-8 rounded-3xl flex flex-col justify-between text-center relative overflow-hidden shadow-2xl border border-[#3E3A35]">
+                    <!-- tape deck decoration lines -->
+                    <div class="absolute top-2 left-0 right-0 h-1 bg-sunset-500 opacity-60"></div>
+                    
+                    <div class="space-y-1">
+                        <span class="text-[10px] uppercase tracking-widest text-amber-500 font-bold">Lofi Playlist Simulator</span>
+                        <h4 class="font-serif font-bold text-lg text-cozy-100">Bếp Nhỏ Giai Điệu 🎵</h4>
+                    </div>
+
+                    <!-- Spinning Vinyl Record -->
+                    <div class="my-8 flex justify-center">
+                        <div class="relative w-44 h-44 rounded-full bg-neutral-900 flex items-center justify-center border-4 border-neutral-800 shadow-2xl relative">
+                            <!-- vinyl lines -->
+                            <div class="absolute inset-2 rounded-full border border-neutral-800/30"></div>
+                            <div class="absolute inset-6 rounded-full border border-neutral-800/40"></div>
+                            <div class="absolute inset-10 rounded-full border border-neutral-800/50"></div>
+                            
+                            <!-- Album Art with spinning class conditionally -->
+                            <div 
+                                :class="isPlaying ? 'animate-spin-slow' : ''"
+                                class="w-20 h-20 rounded-full bg-sunset-200 overflow-hidden border-2 border-sunset-500 flex items-center justify-center"
+                            >
+                                <img src="https://images.unsplash.com/photo-1484755560693-a4074577af3a?w=150&auto=format&fit=crop&q=80" alt="Album art lofi" class="w-full h-full object-cover">
+                            </div>
+                            
+                            <!-- Pinhead hole -->
+                            <div class="absolute w-3 h-3 bg-[#1F1D1B] rounded-full z-10 border border-neutral-700"></div>
+                        </div>
+                    </div>
+
+                    <!-- Dynamic track title info -->
+                    <div class="space-y-1 h-14">
+                        <span class="block font-bold text-sm text-cozy-100" x-text="tracks[activeTrack].title"></span>
+                        <span class="block text-xs text-cozy-300" x-text="'Tâm trạng: ' + tracks[activeTrack].mood"></span>
+                    </div>
+
+                    <!-- Music Equalizer Wave simulation -->
+                    <div class="flex justify-center items-end space-x-1 h-8 my-3">
+                        <div class="w-1.5 rounded-full bg-sunset-500" :style="isPlaying ? 'animation: bounce 0.8s ease-in-out infinite alternate; height: 100%' : 'height: 15%'"></div>
+                        <div class="w-1.5 rounded-full bg-sunset-200" :style="isPlaying ? 'animation: bounce 0.6s ease-in-out infinite alternate 0.1s; height: 100%' : 'height: 25%'"></div>
+                        <div class="w-1.5 rounded-full bg-sunset-500" :style="isPlaying ? 'animation: bounce 0.9s ease-in-out infinite alternate 0.2s; height: 100%' : 'height: 10%'"></div>
+                        <div class="w-1.5 rounded-full bg-sunset-200" :style="isPlaying ? 'animation: bounce 0.5s ease-in-out infinite alternate 0.3s; height: 100%' : 'height: 30%'"></div>
+                        <div class="w-1.5 rounded-full bg-sunset-500" :style="isPlaying ? 'animation: bounce 0.7s ease-in-out infinite alternate 0.4s; height: 100%' : 'height: 15%'"></div>
+                    </div>
+                    <style>
+                        @keyframes bounce {
+                            from { height: 10%; }
+                            to { height: 100%; }
+                        }
+                    </style>
+
+                    <!-- Player Controls -->
+                    <div class="flex items-center justify-center space-x-6 mt-4">
+                        <button 
+                            @click="activeTrack = activeTrack === 0 ? tracks.length - 1 : activeTrack - 1; triggerToast('Đang lùi bài hát... 🎧')"
+                            class="p-2 rounded-full hover:bg-neutral-800 text-cozy-100 transition-all active:scale-90"
+                        >
+                            <i data-lucide="skip-back" class="w-5 h-5"></i>
+                        </button>
+
+                        <button 
+                            @click="isPlaying = !isPlaying; triggerToast(isPlaying ? 'Đang phát danh sách chill... ☕' : 'Đã tạm dừng âm nhạc.')"
+                            class="w-12 h-12 rounded-full bg-sunset-500 text-white flex items-center justify-center hover:bg-sunset-600 shadow-lg active:scale-95 transition-transform"
+                        >
+                            <i :data-lucide="isPlaying ? 'pause' : 'play'" class="w-5 h-5 fill-current"></i>
+                        </button>
+
+                        <button 
+                            @click="activeTrack = activeTrack === tracks.length - 1 ? 0 : activeTrack + 1; triggerToast('Chuyển bài hát tiếp theo... ✨')"
+                            class="p-2 rounded-full hover:bg-neutral-800 text-cozy-100 transition-all active:scale-90"
+                        >
+                            <i data-lucide="skip-forward" class="w-5 h-5"></i>
+                        </button>
+                    </div>
                 </div>
+
+                <!-- Right: K-Drama recommendation shelf -->
+                <div class="lg:col-span-7 bg-white p-6 sm:p-8 rounded-3xl border border-cozy-200 shadow-xl flex flex-col justify-between">
+                    <div class="space-y-4">
+                        <span class="text-xs font-bold text-sunset-500 uppercase tracking-widest block"><i data-lucide="tv" class="w-4 h-4 inline mr-1 -mt-0.5"></i>K-Drama Khuyên Xem Từ Vân Anh</span>
+                        <h4 class="font-serif font-bold text-xl text-cozy-900">Danh Sách Bữa Tiệc Hàn Quốc Ngọt Ngào</h4>
+                    </div>
+
+                    <!-- Drama list cards -->
+                    <div class="space-y-4 my-6">
+                        <!-- drama 1 -->
+                        <div class="p-4 rounded-2xl bg-cozy-100/50 border border-cozy-200/50 flex items-center space-x-4">
+                            <img class="w-16 h-16 rounded-xl object-cover" src="https://images.unsplash.com/photo-1594909122845-11baa439b7bf?w=150&auto=format&fit=crop&q=80" alt="Reply 1988">
+                            <div class="flex-1">
+                                <h5 class="font-serif font-bold text-sm text-cozy-900">Lời Hồi Đáp 1988 (Reply 1988)</h5>
+                                <p class="text-xs text-cozy-800/70 line-clamp-1">Món quà xoa dịu tâm hồn với những lát cắt tình gia đình, tình bạn xóm ngõ ấm lòng.</p>
+                            </div>
+                            <button 
+                                @click="likedDramas[0] = !likedDramas[0]; triggerToast(likedDramas[0] ? 'Đã lưu Reply 1988 vào mục yêu thích!' : 'Đã bỏ lưu.')"
+                                class="p-2 rounded-full bg-white hover:bg-rose-50 text-rose-500 shadow-sm transition-all"
+                            >
+                                <i :data-lucide="likedDramas[0] ? 'heart' : 'heart-off'" class="w-4 h-4" :class="likedDramas[0] ? 'fill-rose-500' : ''"></i>
+                            </button>
+                        </div>
+
+                        <!-- drama 2 -->
+                        <div class="p-4 rounded-2xl bg-cozy-100/50 border border-cozy-200/50 flex items-center space-x-4">
+                            <img class="w-16 h-16 rounded-xl object-cover" src="https://images.unsplash.com/photo-1522869635100-9f4c5e86aa37?w=150&auto=format&fit=crop&q=80" alt="Hometown Cha-Cha-Cha">
+                            <div class="flex-1">
+                                <h5 class="font-serif font-bold text-sm text-cozy-900">Điệu Cha-Cha-Cha Làng Biển</h5>
+                                <p class="text-xs text-cozy-800/70 line-clamp-1">Một ly trà chanh thanh mát làng biển Gongjin ngọt ngào, xoa dịu mệt mỏi tức khắc.</p>
+                            </div>
+                            <button 
+                                @click="likedDramas[1] = !likedDramas[1]; triggerToast(likedDramas[1] ? 'Đã lưu Hometown Cha-Cha-Cha vào mục yêu thích!' : 'Đã bỏ lưu.')"
+                                class="p-2 rounded-full bg-white hover:bg-rose-50 text-rose-500 shadow-sm transition-all"
+                            >
+                                <i :data-lucide="likedDramas[1] ? 'heart' : 'heart-off'" class="w-4 h-4" :class="likedDramas[1] ? 'fill-rose-500' : ''"></i>
+                            </button>
+                        </div>
+
+                        <!-- drama 3 -->
+                        <div class="p-4 rounded-2xl bg-cozy-100/50 border border-cozy-200/50 flex items-center space-x-4">
+                            <img class="w-16 h-16 rounded-xl object-cover" src="https://images.unsplash.com/photo-1621303837174-89787a7d4729?w=150&auto=format&fit=crop&q=80" alt="Our Beloved Summer">
+                            <div class="flex-1">
+                                <h5 class="font-serif font-bold text-sm text-cozy-900">Mùa Hè Yêu Dấu Của Chúng Ta</h5>
+                                <p class="text-xs text-cozy-800/70 line-clamp-1">Bức tranh mộng mơ màu lá mạ nhạt của tuổi trẻ, những cơn mưa rào nhẹ tênh dạt dào cảm xúc.</p>
+                            </div>
+                            <button 
+                                @click="likedDramas[2] = !likedDramas[2]; triggerToast(likedDramas[2] ? 'Đã lưu Our Beloved Summer vào mục yêu thích!' : 'Đã bỏ lưu.')"
+                                class="p-2 rounded-full bg-white hover:bg-rose-50 text-rose-500 shadow-sm transition-all"
+                            >
+                                <i :data-lucide="likedDramas[2] ? 'heart' : 'heart-off'" class="w-4 h-4" :class="likedDramas[2] ? 'fill-rose-500' : ''"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="bg-sunset-100 p-4 rounded-2xl border border-sunset-200 text-xs text-sunset-700 italic">
+                        "Cứ tối thứ 7 lười biếng, làm một cốc sữa ấm, nằm dài ra giường rồi bật một tập Reply 1988 là thế giới bận rộn ngoài kia tan biến hết luôn đấy!"
+                    </div>
+                </div>
+
+            </div>
+        </section>
+        
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-cozy-900 text-cozy-100 py-10 mt-16 border-t border-cozy-800">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
+            <div class="space-y-1">
+                <span class="font-hand text-3xl text-sunset-500 block">Van Anh.</span>
+                <span class="text-xs text-cozy-300">© 2026 Nguyễn Vân Anh - Sinh viên QTKD @ PTIT. Mọi bản quyền được bảo lưu.</span>
             </div>
             
-            <div>
-                <h4 class="font-serif text-sm font-bold uppercase tracking-wider mb-4 text-rose-400">Đường Dẫn Nhanh</h4>
-                <ul class="space-y-2 text-xs text-cream-100/60">
-                    <li><a href="#menu" class="hover:underline">Thực Đơn</a></li>
-                    <li><a href="#customizer" class="hover:underline">Bánh Tự Custom</a></li>
-                    <li><a href="#quiz" class="hover:underline">Game Gợi Ý Bánh</a></li>
-                    <li><a href="#story" class="hover:underline">Về Chúng Tôi</a></li>
-                </ul>
+            <div class="flex space-x-6 text-xs text-cozy-300">
+                <button @click="activeTab = 'about'" class="hover:text-sunset-500 hover:underline">Bản Thân</button>
+                <button @click="activeTab = 'hometown'" class="hover:text-sunset-500 hover:underline">Quê Hương</button>
+                <button @click="activeTab = 'chill'" class="hover:text-sunset-500 hover:underline">Góc Chill</button>
             </div>
-
-            <div>
-                <h4 class="font-serif text-sm font-bold uppercase tracking-wider mb-4 text-rose-400">Chính Sách</h4>
-                <ul class="space-y-2 text-xs text-cream-100/60">
-                    <li><a href="#" class="hover:underline">Chính Sách Giao Bánh</a></li>
-                    <li><a href="#" class="hover:underline">Đổi Trả Bánh Lỗi</a></li>
-                    <li><a href="#" class="hover:underline">Bảo Mật Thông Tin</a></li>
-                </ul>
-            </div>
-
-            <div>
-                <h4 class="font-serif text-sm font-bold uppercase tracking-wider mb-4 text-rose-400">Đăng Ký Khuyến Mãi</h4>
-                <p class="text-xs text-cream-100/60 mb-3">Đăng ký nhận mã voucher giảm giá 15% sớm nhất.</p>
-                <form @submit.prevent="alert('Cảm ơn bạn đã đăng ký!')" class="flex">
-                    <input type="email" required placeholder="Email..." class="px-3 py-2 bg-white/10 rounded-l-xl text-xs focus:outline-none w-full text-white placeholder-cream-100/40 border-none">
-                    <button type="submit" class="bg-rose-500 hover:bg-rose-600 px-4 rounded-r-xl text-xs font-bold transition-all">Gửi</button>
-                </form>
-            </div>
-        </div>
-
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-xs text-cream-100/40">
-            <p>&copy; 2026 SweetJoy Patisserie. All rights reserved. Designed with ❤️ in Vietnam.</p>
         </div>
     </footer>
 
-    <!-- SHOPPING CART DRAWER (Slide over right) -->
+    <!-- INTERACTIVE HOMETOWN SPECIALTY DIALOG / MODAL POPUP -->
     <div 
-        x-show="isCartOpen" 
-        x-cloak
-        class="fixed inset-0 z-50 overflow-hidden" 
-        aria-labelledby="slide-over-title" 
-        role="dialog" 
-        aria-modal="true"
-    >
-        <div class="absolute inset-0 overflow-hidden">
-            <!-- Background Overlay click to close -->
-            <div 
-                @click="isCartOpen = false"
-                x-show="isCartOpen"
-                x-transition:enter="ease-in-out duration-300"
-                x-transition:enter-start="opacity-0"
-                x-transition:enter-end="opacity-100"
-                x-transition:leave="ease-in-out duration-300"
-                x-transition:leave-start="opacity-100"
-                x-transition:leave-end="opacity-0"
-                class="absolute inset-0 bg-stone-900/60 backdrop-blur-sm transition-opacity"
-            ></div>
-
-            <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
-                <div 
-                    x-show="isCartOpen"
-                    x-transition:enter="transform transition ease-in-out duration-300 sm:duration-500"
-                    x-transition:enter-start="translate-x-full"
-                    x-transition:enter-end="translate-x-0"
-                    x-transition:leave="transform transition ease-in-out duration-300 sm:duration-500"
-                    x-transition:leave-start="translate-x-0"
-                    x-transition:leave-end="translate-x-full"
-                    class="pointer-events-auto w-screen max-w-md"
-                >
-                    <div class="flex h-full flex-col overflow-y-scroll bg-cream-50 shadow-2xl border-l border-cream-200">
-                        <div class="flex-1 overflow-y-auto py-6 px-4 sm:px-6 custom-scrollbar">
-                            <div class="flex items-start justify-between">
-                                <h2 class="font-serif text-lg font-bold text-cocoa-900 flex items-center space-x-2" id="slide-over-title">
-                                    <i data-lucide="shopping-bag" class="w-5 h-5 text-rose-500"></i>
-                                    <span>Giỏ Hàng Ngọt Ngào</span>
-                                </h2>
-                                <button @click="isCartOpen = false" class="text-cocoa-800/60 hover:text-cocoa-900 transition-colors p-1">
-                                    <i data-lucide="x" class="w-6 h-6"></i>
-                                </button>
-                            </div>
-
-                            <!-- Cart lists -->
-                            <div class="mt-8">
-                                <template x-if="cart.length === 0">
-                                    <div class="text-center py-12 space-y-4">
-                                        <div class="w-16 h-16 rounded-full bg-cream-200 flex items-center justify-center mx-auto text-cocoa-800/30">
-                                            <i data-lucide="cake-slice" class="w-8 h-8"></i>
-                                        </div>
-                                        <p class="text-sm text-cocoa-800/50">Giỏ hàng của bạn đang trống.</p>
-                                        <button @click="isCartOpen = false" class="px-5 py-2.5 bg-rose-500 text-white font-bold rounded-full text-xs hover:bg-rose-600 transition-all">Hãy đi tìm bánh thôi!</button>
-                                    </div>
-                                </template>
-
-                                <div class="flow-root">
-                                    <ul role="list" class="-my-6 divide-y divide-cream-200">
-                                        <template x-for="item in cart" :key="item.cartId">
-                                            <li class="flex py-6">
-                                                <div class="h-20 w-20 flex-shrink-0 overflow-hidden rounded-xl border border-cream-200 bg-cream-100">
-                                                    <img :src="item.image" :alt="item.name" class="h-full w-full object-cover">
-                                                </div>
-
-                                                <div class="ml-4 flex flex-1 flex-col justify-between">
-                                                    <div>
-                                                        <div class="flex justify-between text-sm font-semibold text-cocoa-900">
-                                                            <h3 class="line-clamp-1" x-text="item.name"></h3>
-                                                            <p class="ml-4 font-bold text-rose-500" x-text="(item.price * item.quantity).toLocaleString('vi-VN') + ' đ'"></p>
-                                                        </div>
-                                                        <p class="mt-1 text-xs text-amber-700 font-medium" x-show="item.details" x-text="item.details"></p>
-                                                    </div>
-                                                    <div class="flex items-center justify-between text-xs">
-                                                        <div class="flex items-center space-x-2">
-                                                            <button 
-                                                                @click="if(item.quantity > 1) { item.quantity-- } else { removeFromCart(item.cartId) }"
-                                                                class="w-6 h-6 rounded-md bg-cream-200 hover:bg-cream-300 flex items-center justify-center font-bold"
-                                                            >-</button>
-                                                            <span class="font-bold text-sm" x-text="item.quantity"></span>
-                                                            <button 
-                                                                @click="item.quantity++"
-                                                                class="w-6 h-6 rounded-md bg-cream-200 hover:bg-cream-300 flex items-center justify-center font-bold"
-                                                            >+</button>
-                                                        </div>
-
-                                                        <div class="flex">
-                                                            <button @click="removeFromCart(item.cartId)" class="font-medium text-rose-500 hover:text-rose-600">Xóa</button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </li>
-                                        </template>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Drawer Footer & Price Calculations -->
-                        <div class="border-t border-cream-200 py-6 px-4 sm:px-6 space-y-4 bg-cream-100">
-                            <div class="flex justify-between text-base font-bold text-cocoa-900">
-                                <span>Tổng cộng:</span>
-                                <span class="text-rose-500 font-serif text-lg" x-text="getCartTotal().toLocaleString('vi-VN') + ' đ'"></span>
-                            </div>
-                            <p class="text-xs text-cocoa-800/50">Phí vận chuyển và thuế sẽ được tính toán chi tiết tại trang thanh toán thật.</p>
-                            <div class="mt-6">
-                                <button 
-                                    @click="checkout()"
-                                    :disabled="cart.length === 0"
-                                    class="w-full py-3.5 bg-rose-500 text-white font-bold rounded-xl shadow-lg hover:bg-rose-600 disabled:opacity-50 disabled:pointer-events-none transition-all text-center text-sm"
-                                >
-                                    Mô phỏng đặt bánh & Thanh toán
-                                </button>
-                            </div>
-                            <div class="flex justify-center text-center text-xs">
-                                <button @click="isCartOpen = false" class="font-medium text-amber-700 hover:underline">Tiếp tục xem thực đơn</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- PRODUCT DETAIL MODAL (Popup) -->
-    <div 
-        x-show="selectedPastry !== null" 
+        x-show="hometownDetail !== null" 
         x-cloak
         class="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 sm:p-6"
     >
         <!-- Overlay backdrop -->
         <div 
-            @click="selectedPastry = null"
-            class="fixed inset-0 bg-stone-900/60 backdrop-blur-sm transition-opacity"
+            @click="hometownDetail = null"
+            class="fixed inset-0 bg-cozy-900/60 backdrop-blur-sm transition-opacity"
         ></div>
 
         <!-- Content card body -->
         <div 
-            x-show="selectedPastry !== null"
+            x-show="hometownDetail !== null"
             x-transition:enter="transition ease-out duration-300"
             x-transition:enter-start="opacity-0 scale-95"
             x-transition:enter-end="opacity-100 scale-100"
             x-transition:leave="transition ease-in duration-200"
             x-transition:leave-start="opacity-100 scale-100"
             x-transition:leave-end="opacity-0 scale-95"
-            class="bg-cream-50 rounded-3xl overflow-hidden max-w-2xl w-full border border-cream-200 shadow-2xl relative z-10"
+            class="bg-white rounded-3xl overflow-hidden max-w-xl w-full border border-cozy-200 shadow-2xl relative z-10"
         >
-            <button @click="selectedPastry = null" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/80 hover:bg-white flex items-center justify-center text-cocoa-800 shadow-md">
+            <button @click="hometownDetail = null" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/85 hover:bg-white flex items-center justify-center text-cozy-800 shadow-md">
                 <i data-lucide="x" class="w-5 h-5"></i>
             </button>
 
-            <div class="grid sm:grid-cols-2">
-                <!-- Image Side -->
-                <div class="h-60 sm:h-full bg-cream-200">
-                    <img :src="selectedPastry?.image" class="w-full h-full object-cover">
+            <div>
+                <!-- Image Header -->
+                <div class="h-60 bg-cozy-200 overflow-hidden">
+                    <img :src="hometownDetail?.image" class="w-full h-full object-cover">
                 </div>
 
-                <!-- Info Side -->
-                <div class="p-6 flex flex-col justify-between space-y-6">
-                    <div class="space-y-3">
-                        <span class="text-[10px] bg-rose-100 text-rose-500 font-bold px-2.5 py-1 rounded-full uppercase tracking-wider" x-text="selectedPastry?.calories"></span>
-                        <h3 class="font-serif text-2xl font-bold text-cocoa-900" x-text="selectedPastry?.name"></h3>
-                        <p class="text-xs text-cocoa-800/80 leading-relaxed" x-text="selectedPastry?.desc"></p>
-                        
-                        <!-- Ingredient specifics -->
-                        <div class="pt-3 border-t border-cream-200/50 space-y-1 text-xs">
-                            <span class="block font-bold text-cocoa-900">Thành phần chính:</span>
-                            <span class="text-cocoa-800/70" x-text="selectedPastry?.ingredients"></span>
-                        </div>
-
-                        <div class="space-y-1 text-xs">
-                            <span class="block font-bold text-cocoa-900">Lưu ý dị ứng:</span>
-                            <span class="text-rose-500 font-medium" x-text="selectedPastry?.allergens"></span>
-                        </div>
-                    </div>
-
-                    <!-- Modal Actions and price -->
-                    <div class="pt-4 border-t border-cream-200/50 flex items-center justify-between">
-                        <div>
-                            <span class="text-[10px] text-cocoa-800/40 block">Đơn giá</span>
-                            <span class="font-serif font-bold text-xl text-rose-500" x-text="selectedPastry?.price.toLocaleString('vi-VN') + ' đ'"></span>
-                        </div>
-                        <button 
-                            @click="addToCart(selectedPastry); selectedPastry = null"
-                            class="px-6 py-2.5 bg-rose-500 text-white font-bold rounded-xl hover:bg-rose-600 transition-all text-xs flex items-center space-x-2 shadow-md"
-                        >
-                            <i data-lucide="shopping-bag" class="w-4 h-4"></i>
-                            <span>Thêm vào giỏ</span>
-                        </button>
-                    </div>
+                <!-- Details body -->
+                <div class="p-6 sm:p-8 space-y-4">
+                    <span class="text-[10px] bg-sunset-100 text-sunset-600 font-bold px-2.5 py-1 rounded-full uppercase tracking-wider" x-text="hometownDetail?.type"></span>
+                    <h4 class="font-serif text-2xl font-bold text-cozy-900" x-text="hometownDetail?.title"></h4>
+                    <p class="text-sm text-cozy-800/80 leading-relaxed" x-text="hometownDetail?.desc"></p>
+                    
+                    <button 
+                        @click="hometownDetail = null"
+                        class="w-full py-3 bg-sunset-500 hover:bg-sunset-600 text-white font-bold rounded-xl shadow-md transition-all text-sm mt-4"
+                    >
+                        Đóng xem chi tiết
+                    </button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- MOCK CHECKOUT SUCCESS TOAST -->
+    <!-- MOCK INTERACTIVE TOAST MESSAGE -->
     <div 
-        x-show="showCheckoutSuccess" 
+        x-show="showToast" 
         x-cloak
         x-transition:enter="transition ease-out duration-300"
         x-transition:enter-start="opacity-0 translate-y-4"
@@ -1267,20 +620,15 @@
         x-transition:leave="transition ease-in duration-300"
         x-transition:leave-start="opacity-100 translate-y-0"
         x-transition:leave-end="opacity-0 translate-y-4"
-        class="fixed bottom-6 right-6 z-50 max-w-md bg-stone-900 text-white p-5 rounded-2xl shadow-2xl border border-white/10 flex items-start space-x-4"
+        class="fixed bottom-6 right-6 z-50 max-w-sm bg-cozy-900 text-white px-5 py-4 rounded-2xl shadow-2xl border border-cozy-800 flex items-center space-x-3"
     >
-        <div class="w-10 h-10 rounded-full bg-emerald-500 flex items-center justify-center text-white shrink-0">
-            <i data-lucide="check-circle" class="w-6 h-6"></i>
+        <div class="w-8 h-8 rounded-full bg-sunset-500 flex items-center justify-center text-white shrink-0">
+            <i data-lucide="sparkles" class="w-4.5 h-4.5"></i>
         </div>
-        <div>
-            <h5 class="font-serif font-bold text-base text-emerald-400">Đặt Bánh Thành Công!</h5>
-            <p class="text-xs text-white/80 mt-1">
-                SweetJoy đã nhận đơn mô phỏng của bạn. Chuyên viên thiết kế bánh sẽ liên lạc lại để duyệt mẫu nướng trong giây lát.
-            </p>
-        </div>
+        <p class="text-xs text-white/90 font-medium" x-text="toastMessage"></p>
     </div>
 
-    <!-- Initialize Lucide icons on bootup -->
+    <!-- Initialize Lucide icons on page load -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             lucide.createIcons();
